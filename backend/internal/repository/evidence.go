@@ -16,7 +16,7 @@ func NewEvidenceRepository(db *sql.DB) *EvidenceRepository {
 func (r *EvidenceRepository) Create(e *domain.Evidence) error {
 	_, err := r.db.Exec(
 		`INSERT INTO evidences (id, venture_id, mission_id, uploader_id, evidence_type, storage_url, text_content, file_size_bytes, mime_type, submitted_at)
-		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
 		e.ID, e.VentureID, e.MissionID, e.UploaderID, e.EvidenceType, e.StorageURL, e.TextContent, e.FileSizeBytes, e.MimeType, e.SubmittedAt,
 	)
 	return err
@@ -43,7 +43,7 @@ func scanEvidence(scanner interface{ Scan(dest ...interface{}) error }) (*domain
 func (r *EvidenceRepository) FindByVenture(ventureID string) ([]*domain.Evidence, error) {
 	rows, err := r.db.Query(
 		`SELECT id, venture_id, mission_id, uploader_id, evidence_type, storage_url, text_content, thumbnail_url, file_size_bytes, mime_type, submitted_at
-		 FROM evidences WHERE venture_id=? ORDER BY submitted_at DESC`, ventureID,
+		 FROM evidences WHERE venture_id=$1 ORDER BY submitted_at DESC`, ventureID,
 	)
 	if err != nil {
 		return nil, err
@@ -63,7 +63,7 @@ func (r *EvidenceRepository) FindByVenture(ventureID string) ([]*domain.Evidence
 func (r *EvidenceRepository) FindByMission(missionID string) ([]*domain.Evidence, error) {
 	rows, err := r.db.Query(
 		`SELECT id, venture_id, mission_id, uploader_id, evidence_type, storage_url, text_content, thumbnail_url, file_size_bytes, mime_type, submitted_at
-		 FROM evidences WHERE mission_id=? ORDER BY submitted_at DESC`, missionID,
+		 FROM evidences WHERE mission_id=$1 ORDER BY submitted_at DESC`, missionID,
 	)
 	if err != nil {
 		return nil, err
@@ -83,7 +83,7 @@ func (r *EvidenceRepository) FindByMission(missionID string) ([]*domain.Evidence
 func (r *EvidenceRepository) FindByID(id string) (*domain.Evidence, error) {
 	row := r.db.QueryRow(
 		`SELECT id, venture_id, mission_id, uploader_id, evidence_type, storage_url, text_content, thumbnail_url, file_size_bytes, mime_type, submitted_at
-		 FROM evidences WHERE id=?`, id,
+		 FROM evidences WHERE id=$1`, id,
 	)
 	e, err := scanEvidence(row)
 	if err == sql.ErrNoRows {
@@ -97,7 +97,7 @@ func (r *EvidenceRepository) FindByID(id string) (*domain.Evidence, error) {
 func (r *EvidenceRepository) CreateReview(rv *domain.EvidenceReview) error {
 	_, err := r.db.Exec(
 		`INSERT INTO evidence_reviews (id, evidence_id, reviewer_type, verdict, score, rationale, next_action, processing_time_ms, created_at)
-		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
 		rv.ID, rv.EvidenceID, rv.ReviewerType, rv.Verdict, rv.Score, rv.Rationale, rv.NextAction, rv.ProcessingTimeMs, rv.CreatedAt,
 	)
 	return err
@@ -108,7 +108,7 @@ func (r *EvidenceRepository) FindReviewByEvidence(evidenceID string) (*domain.Ev
 	var nextAction, overriddenBy sql.NullString
 	err := r.db.QueryRow(
 		`SELECT id, evidence_id, reviewer_type, verdict, score, rationale, next_action, overridden_by, processing_time_ms, created_at
-		 FROM evidence_reviews WHERE evidence_id=? ORDER BY created_at DESC LIMIT 1`, evidenceID,
+		 FROM evidence_reviews WHERE evidence_id=$1 ORDER BY created_at DESC LIMIT 1`, evidenceID,
 	).Scan(&rv.ID, &rv.EvidenceID, &rv.ReviewerType, &rv.Verdict, &rv.Score, &rv.Rationale, &nextAction, &overriddenBy, &rv.ProcessingTimeMs, &rv.CreatedAt)
 	if err == sql.ErrNoRows {
 		return nil, domain.ErrNotFound
@@ -120,7 +120,7 @@ func (r *EvidenceRepository) FindReviewByEvidence(evidenceID string) (*domain.Ev
 
 func (r *EvidenceRepository) OverrideReview(id string, verdict, rationale, overriddenBy string) error {
 	_, err := r.db.Exec(
-		`UPDATE evidence_reviews SET verdict=?, rationale=?, overridden_by=?, reviewer_type='human_override' WHERE id=?`,
+		`UPDATE evidence_reviews SET verdict=$1, rationale=$2, overridden_by=$3, reviewer_type='human_override' WHERE id=$4`,
 		verdict, rationale, overriddenBy, id,
 	)
 	return err

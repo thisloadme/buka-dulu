@@ -23,7 +23,7 @@ func (r *UserRepository) Create(user *domain.User) error {
 	}
 	_, err := r.db.Exec(
 		`INSERT INTO users (id, role, full_name, email, phone, password_hash, status, created_at, updated_at)
-		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
 		user.ID, string(user.Role), user.FullName, email, phone, user.PasswordHash, user.Status, user.CreatedAt, user.UpdatedAt,
 	)
 	return err
@@ -50,7 +50,7 @@ func scanUser(scanner interface {
 func (r *UserRepository) FindByEmail(email string) (*domain.User, error) {
 	row := r.db.QueryRow(
 		`SELECT id, role, full_name, email, phone, password_hash, status, last_login_at, created_at, updated_at
-		 FROM users WHERE email = ?`, email,
+		 FROM users WHERE email = $1`, email,
 	)
 	u, err := scanUser(row)
 	if err == sql.ErrNoRows {
@@ -62,7 +62,7 @@ func (r *UserRepository) FindByEmail(email string) (*domain.User, error) {
 func (r *UserRepository) FindByPhone(phone string) (*domain.User, error) {
 	row := r.db.QueryRow(
 		`SELECT id, role, full_name, email, phone, password_hash, status, last_login_at, created_at, updated_at
-		 FROM users WHERE phone = ?`, phone,
+		 FROM users WHERE phone = $1`, phone,
 	)
 	u, err := scanUser(row)
 	if err == sql.ErrNoRows {
@@ -74,7 +74,7 @@ func (r *UserRepository) FindByPhone(phone string) (*domain.User, error) {
 func (r *UserRepository) FindByID(id string) (*domain.User, error) {
 	row := r.db.QueryRow(
 		`SELECT id, role, full_name, email, phone, password_hash, status, last_login_at, created_at, updated_at
-		 FROM users WHERE id = ?`, id,
+		 FROM users WHERE id = $1`, id,
 	)
 	u, err := scanUser(row)
 	if err == sql.ErrNoRows {
@@ -84,6 +84,6 @@ func (r *UserRepository) FindByID(id string) (*domain.User, error) {
 }
 
 func (r *UserRepository) UpdateLastLogin(id string) error {
-	_, err := r.db.Exec(`UPDATE users SET last_login_at = datetime('now'), updated_at = datetime('now') WHERE id = ?`, id)
+	_, err := r.db.Exec(`UPDATE users SET last_login_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = $1`, id)
 	return err
 }

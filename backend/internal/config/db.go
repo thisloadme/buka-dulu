@@ -7,23 +7,15 @@ import (
 	"os"
 	"strings"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 func InitDB(databaseURL string) (*sql.DB, error) {
-	// Parse sqlite://./data/bukadulu.db → ./data/bukadulu.db
-	path := strings.TrimPrefix(databaseURL, "sqlite://")
-
-	// Ensure directory exists
-	dir := path
-	if idx := strings.LastIndex(dir, "/"); idx > 0 {
-		dir = dir[:idx]
-		if err := os.MkdirAll(dir, 0755); err != nil {
-			return nil, fmt.Errorf("create db dir: %w", err)
-		}
+	if databaseURL == "" {
+		return nil, fmt.Errorf("DATABASE_URL is required")
 	}
 
-	db, err := sql.Open("sqlite3", path+"?_journal_mode=WAL&_foreign_keys=on")
+	db, err := sql.Open("pgx", databaseURL)
 	if err != nil {
 		return nil, fmt.Errorf("open db: %w", err)
 	}
@@ -32,15 +24,11 @@ func InitDB(databaseURL string) (*sql.DB, error) {
 		return nil, fmt.Errorf("ping db: %w", err)
 	}
 
-	// Enable WAL mode for concurrency
-	if _, err := db.Exec("PRAGMA journal_mode=WAL"); err != nil {
-		slog.Warn("failed to set WAL mode", "error", err)
-	}
-	if _, err := db.Exec("PRAGMA foreign_keys=ON"); err != nil {
-		slog.Warn("failed to enable foreign keys", "error", err)
-	}
+	// Connection pool settings
+	db.SetMaxOpenConns(25)
+	db.SetMaxIdleConns(5)
 
-	slog.Info("database connected", "path", path)
+	slog.Info("database connected", "driver", "postgres")
 	return db, nil
 }
 

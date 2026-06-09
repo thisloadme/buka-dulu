@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/riyantobudi/bukadulu/internal/domain"
 )
 
@@ -16,7 +17,7 @@ func NewIngredientRepository(db *sql.DB) *IngredientRepository {
 func (r *IngredientRepository) Create(i *domain.Ingredient) error {
 	_, err := r.db.Exec(
 		`INSERT INTO ingredients (id, venture_id, menu_id, name, unit, quantity, unit_price, created_at, updated_at)
-		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
 		i.ID, i.VentureID, i.MenuID, i.Name, i.Unit, i.Quantity, i.UnitPrice, i.CreatedAt, i.UpdatedAt,
 	)
 	return err
@@ -25,7 +26,7 @@ func (r *IngredientRepository) Create(i *domain.Ingredient) error {
 func (r *IngredientRepository) FindByMenu(menuID string) ([]*domain.Ingredient, error) {
 	rows, err := r.db.Query(
 		`SELECT id, venture_id, menu_id, name, unit, quantity, unit_price, created_at, updated_at
-		 FROM ingredients WHERE menu_id=? ORDER BY created_at`, menuID,
+		 FROM ingredients WHERE menu_id=$1 ORDER BY created_at`, menuID,
 	)
 	if err != nil {
 		return nil, err
@@ -52,7 +53,7 @@ func (r *IngredientRepository) FindByIDs(ids []string) ([]*domain.Ingredient, er
 		if i > 0 {
 			q += ","
 		}
-		q += "?"
+		q += fmt.Sprintf("$%d", i+1)
 	}
 	q += ")"
 
@@ -79,7 +80,7 @@ func (r *IngredientRepository) FindByIDs(ids []string) ([]*domain.Ingredient, er
 }
 
 func (r *IngredientRepository) Delete(id string) error {
-	_, err := r.db.Exec(`DELETE FROM ingredients WHERE id=?`, id)
+	_, err := r.db.Exec(`DELETE FROM ingredients WHERE id=$1`, id)
 	return err
 }
 
@@ -88,7 +89,7 @@ func (r *IngredientRepository) Delete(id string) error {
 func (r *IngredientRepository) CreatePackaging(p *domain.PackagingCost) error {
 	_, err := r.db.Exec(
 		`INSERT INTO packaging_costs (id, venture_id, menu_id, name, unit_price, quantity_per_pcs, created_at)
-		 VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		 VALUES ($1, $2, $3, $4, $5, $6, $7)`,
 		p.ID, p.VentureID, p.MenuID, p.Name, p.UnitPrice, p.QuantityPerPcs, p.CreatedAt,
 	)
 	return err
@@ -97,7 +98,7 @@ func (r *IngredientRepository) CreatePackaging(p *domain.PackagingCost) error {
 func (r *IngredientRepository) FindPackagingByMenu(menuID string) ([]*domain.PackagingCost, error) {
 	rows, err := r.db.Query(
 		`SELECT id, venture_id, menu_id, name, unit_price, quantity_per_pcs, created_at
-		 FROM packaging_costs WHERE menu_id=?`, menuID,
+		 FROM packaging_costs WHERE menu_id=$1`, menuID,
 	)
 	if err != nil {
 		return nil, err
@@ -120,14 +121,14 @@ func (r *IngredientRepository) FindPackagingByMenu(menuID string) ([]*domain.Pac
 func (r *IngredientRepository) SaveCostSummary(cs *domain.CostSummary) error {
 	_, err := r.db.Exec(
 		`INSERT INTO cost_summaries (id, venture_id, menu_id, hpp_per_porsi, suggested_price, target_margin, gross_margin, margin_status, break_even_unit, labor_per_unit, overhead_per_unit, is_locked, created_at, updated_at)
-		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
 		 ON CONFLICT(venture_id, menu_id) DO UPDATE SET
-		 hpp_per_porsi=excluded.hpp_per_porsi, suggested_price=excluded.suggested_price, target_margin=excluded.target_margin,
-		 gross_margin=excluded.gross_margin, margin_status=excluded.margin_status, break_even_unit=excluded.break_even_unit,
-		 labor_per_unit=excluded.labor_per_unit, overhead_per_unit=excluded.overhead_per_unit, updated_at=excluded.updated_at`,
+		 hpp_per_porsi=EXCLUDED.hpp_per_porsi, suggested_price=EXCLUDED.suggested_price, target_margin=EXCLUDED.target_margin,
+		 gross_margin=EXCLUDED.gross_margin, margin_status=EXCLUDED.margin_status, break_even_unit=EXCLUDED.break_even_unit,
+		 labor_per_unit=EXCLUDED.labor_per_unit, overhead_per_unit=EXCLUDED.overhead_per_unit, updated_at=EXCLUDED.updated_at`,
 		cs.ID, cs.VentureID, cs.MenuID, cs.HppPerPorsi, cs.SuggestedPrice, cs.TargetMargin,
 		cs.GrossMargin, cs.MarginStatus, cs.BreakEvenUnit, cs.LaborPerUnit, cs.OverheadPerUnit,
-		boolToInt(cs.IsLocked), cs.CreatedAt, cs.UpdatedAt,
+		cs.IsLocked, cs.CreatedAt, cs.UpdatedAt,
 	)
 	return err
 }
@@ -136,7 +137,7 @@ func (r *IngredientRepository) FindCostSummary(ventureID, menuID string) (*domai
 	cs := &domain.CostSummary{}
 	err := r.db.QueryRow(
 		`SELECT id, venture_id, menu_id, hpp_per_porsi, suggested_price, target_margin, gross_margin, margin_status, break_even_unit, labor_per_unit, overhead_per_unit, is_locked, created_at, updated_at
-		 FROM cost_summaries WHERE venture_id=? AND menu_id=?`, ventureID, menuID,
+		 FROM cost_summaries WHERE venture_id=$1 AND menu_id=$2`, ventureID, menuID,
 	).Scan(&cs.ID, &cs.VentureID, &cs.MenuID, &cs.HppPerPorsi, &cs.SuggestedPrice, &cs.TargetMargin, &cs.GrossMargin, &cs.MarginStatus, &cs.BreakEvenUnit, &cs.LaborPerUnit, &cs.OverheadPerUnit, &cs.IsLocked, &cs.CreatedAt, &cs.UpdatedAt)
 	if err == sql.ErrNoRows {
 		return nil, domain.ErrNotFound
@@ -147,7 +148,7 @@ func (r *IngredientRepository) FindCostSummary(ventureID, menuID string) (*domai
 func (r *IngredientRepository) FindAllCostSummaries(ventureID string) ([]*domain.CostSummary, error) {
 	rows, err := r.db.Query(
 		`SELECT id, venture_id, menu_id, hpp_per_porsi, suggested_price, target_margin, gross_margin, margin_status, break_even_unit, labor_per_unit, overhead_per_unit, is_locked, created_at, updated_at
-		 FROM cost_summaries WHERE venture_id=?`, ventureID,
+		 FROM cost_summaries WHERE venture_id=$1`, ventureID,
 	)
 	if err != nil {
 		return nil, err
@@ -166,6 +167,6 @@ func (r *IngredientRepository) FindAllCostSummaries(ventureID string) ([]*domain
 }
 
 func (r *IngredientRepository) LockCost(ventureID string) error {
-	_, err := r.db.Exec(`UPDATE cost_summaries SET is_locked=1, updated_at=datetime('now') WHERE venture_id=?`, ventureID)
+	_, err := r.db.Exec(`UPDATE cost_summaries SET is_locked=TRUE, updated_at=CURRENT_TIMESTAMP WHERE venture_id=$1`, ventureID)
 	return err
 }
