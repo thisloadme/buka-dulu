@@ -291,7 +291,7 @@ nav .container {
 /* ===== PRICING ===== */
 .pricing { padding: 100px 0; background: var(--brand-dark); color: #fff; }
 .pricing .display-large { color: #fff; }
-.pricing .body-text { color: rgba(255,255,255,0.7); }
+.pricing .body-large, .pricing .body-text { color: rgba(255,255,255,0.7); }
 .pricing .micro { color: var(--brand-amber); }
 .pricing-grid {
   display: grid;
