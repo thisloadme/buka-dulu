@@ -9,7 +9,7 @@ final authProvider = StateNotifierProvider<AuthNotifier, AsyncValue<AuthResponse
 
 class AuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
   final AuthApi _api;
-  final StateController<String?> _tokenNotifier;
+  final TokenNotifier _tokenNotifier;
 
   AuthNotifier(this._api, this._tokenNotifier) : super(const AsyncValue.data(null));
 
@@ -18,7 +18,7 @@ class AuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
     state = await AsyncValue.guard(() async {
       final data = await _api.register(fullName: fullName, email: email, password: password);
       final resp = AuthResponse.fromJson(data);
-      _tokenNotifier.state = resp.token;
+      await _tokenNotifier.save(resp.token);
       return resp;
     });
   }
@@ -28,13 +28,13 @@ class AuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
     state = await AsyncValue.guard(() async {
       final data = await _api.login(emailOrPhone: emailOrPhone, password: password);
       final resp = AuthResponse.fromJson(data);
-      _tokenNotifier.state = resp.token;
+      await _tokenNotifier.save(resp.token);
       return resp;
     });
   }
 
-  void logout() {
-    _tokenNotifier.state = null;
+  Future<void> logout() async {
+    await _tokenNotifier.clear();
     state = const AsyncValue.data(null);
   }
 }

@@ -1,4 +1,6 @@
 import 'package:go_router/go_router.dart';
+import 'package:bukadulu/presentation/pages/splash_screen.dart';
+import 'package:bukadulu/presentation/pages/onboarding_page.dart';
 import 'package:bukadulu/presentation/pages/auth/login_page.dart';
 import 'package:bukadulu/presentation/pages/auth/register_page.dart';
 import 'package:bukadulu/presentation/pages/dashboard/dashboard_page.dart';
@@ -13,8 +15,10 @@ import 'package:bukadulu/presentation/pages/evidence/evidence_upload_page.dart';
 import 'package:bukadulu/presentation/pages/score/score_page.dart';
 
 final router = GoRouter(
-  initialLocation: '/login',
+  initialLocation: '/splash',
   routes: [
+    GoRoute(path: '/splash', builder: (_, __) => const SplashScreen()),
+    GoRoute(path: '/onboarding', builder: (_, __) => const OnboardingPage()),
     GoRoute(path: '/login', builder: (_, __) => const LoginPage()),
     GoRoute(path: '/register', builder: (_, __) => const RegisterPage()),
     GoRoute(path: '/dashboard', builder: (_, __) => const DashboardPage()),
