@@ -4,14 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BukaDulu — Validasi Ide F&B dalam 14 Hari</title>
-  <meta name="description" content="Bukan business plan. Bukan analisis AI. BukaDulu adalah sistem eksekusi yang memaksa kamu bergerak — dari ide mentah ke bukti pasar nyata dalam 14 hari.">
-  <meta name="theme-color" content="#ea580c">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     /* ===== RESET & BASE ===== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,7 +18,6 @@
       background: #ffffff;
       line-height: 1.6;
     }
-    img { max-width: 100%; height: auto; display: block; }
 
     /* ===== DESIGN TOKENS ===== */
     :root {
@@ -42,6 +36,8 @@
       --bg-card: #ffffff;
       --success: #16a34a;
       --success-bg: rgba(22,163,74,0.12);
+      --shadow-blue: rgba(80,50,20,0.12);
+      --shadow-dark: rgba(0,0,0,0.08);
       --container: 1120px;
     }
 
@@ -75,11 +71,17 @@
     .body-large { font-size: 1.125rem; font-weight: 300; line-height: 1.55; color: var(--body); }
     .body-text { font-size: 1rem; font-weight: 300; line-height: 1.6; color: var(--body); }
     .caption { font-size: 0.875rem; font-weight: 400; color: var(--body); }
-    .micro { font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; }
+    .micro { font-size: 0.75rem; font-weight: 400; text-transform: uppercase; letter-spacing: 0.08em; color: var(--body); }
 
     /* ===== UTILITY ===== */
     .container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+    .flex-center { display: flex; align-items: center; justify-content: center; }
+    .gap-2 { gap: 8px; }
+    .gap-4 { gap: 16px; }
+    .gap-6 { gap: 24px; }
+    .gap-8 { gap: 32px; }
     .text-center { text-align: center; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
 
     /* ===== BUTTONS ===== */
     .btn {
@@ -105,10 +107,6 @@
     }
     .btn-outline-light:hover { background: rgba(255,255,255,0.08); }
     .btn-lg { padding: 14px 32px; font-size: 1.063rem; border-radius: 8px; }
-    .btn-white {
-      background: #fff; color: var(--brand-orange); font-weight: 500;
-    }
-    .btn-white:hover { background: #fef2ea; }
 
     /* ===== NAV ===== */
     nav {
@@ -126,7 +124,13 @@
       font-size: 1.25rem; font-weight: 500; color: var(--heading);
       text-decoration: none;
     }
-    .logo img { width: 32px; height: 32px; border-radius: 8px; }
+    .logo-mark {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--brand-orange), var(--brand-amber));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 1rem; font-weight: 600;
+    }
     .nav-links { display: flex; align-items: center; gap: 32px; }
     .nav-links a {
       font-size: 0.875rem; font-weight: 400; color: var(--label);
@@ -150,9 +154,7 @@
         backdrop-filter: blur(14px);
         padding: 16px 24px; gap: 16px;
         border-bottom: 1px solid var(--border-light);
-        align-items: stretch;
       }
-      .nav-links.open .btn { text-align: center; justify-content: center; }
     }
 
     /* ===== HERO ===== */
@@ -205,7 +207,6 @@
     }
     .problem .display-large, .problem .section-heading { color: #fff; }
     .problem .body-large, .problem .body-text { color: rgba(255,255,255,0.7); }
-    .problem .micro { color: var(--brand-amber); }
     .problem-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -222,17 +223,17 @@
       width: 40px; height: 40px;
       border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
-      margin-bottom: 18px;
+      margin-bottom: 18px; font-size: 1.25rem;
     }
     .problem-card h3 { color: #fff; font-size: 1.125rem; font-weight: 400; margin-bottom: 8px; }
     .problem-card p { font-size: 0.9375rem; color: rgba(255,255,255,0.6); line-height: 1.55; }
 
     /* ===== HOW IT WORKS ===== */
     .how-it-works { padding: 100px 0; background: var(--bg-warm); }
-    .how-it-works .micro { color: var(--brand-orange); }
     .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 32px; margin-top: 56px; }
     .step {
       text-align: center; padding: 0 12px;
+      position: relative;
     }
     .step-number {
       width: 56px; height: 56px; margin: 0 auto 20px;
@@ -247,7 +248,6 @@
     /* ===== FEATURES ===== */
     .features { padding: 100px 0; }
     .features-header { max-width: 600px; margin: 0 auto 60px; text-align: center; }
-    .features .micro { color: var(--brand-orange); }
     .features-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -269,8 +269,7 @@
       background: var(--brand-cream);
       border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
-      margin-bottom: 20px;
-      font-size: 1.125rem; font-weight: 500; color: var(--brand-orange);
+      margin-bottom: 20px; font-size: 1.25rem;
     }
     .feature-card h3 { font-size: 1.125rem; font-weight: 400; margin-bottom: 8px; }
     .feature-card p { font-size: 0.9375rem; color: var(--body); line-height: 1.55; }
@@ -290,7 +289,6 @@
       background: linear-gradient(180deg, var(--bg-warm), #fff);
       text-align: center;
     }
-    .proof .micro { color: var(--brand-orange); }
     .proof-quote {
       max-width: 640px; margin: 40px auto 0;
       padding: 40px 32px;
@@ -322,7 +320,6 @@
     .pricing { padding: 100px 0; background: var(--brand-dark); color: #fff; }
     .pricing .display-large, .pricing .section-heading { color: #fff; }
     .pricing .body-text { color: rgba(255,255,255,0.7); }
-    .pricing .micro { color: var(--brand-amber); }
     .pricing-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -356,12 +353,11 @@
       padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
       display: flex; align-items: center; gap: 10px;
     }
-    .pricing-features li::before { content: '--'; color: var(--brand-amber); font-weight: 500; margin-right: 4px; }
+    .pricing-features li::before { content: '✓'; color: var(--brand-amber); font-weight: 500; }
     .pricing-card .btn { width: 100%; justify-content: center; }
 
     /* ===== FAQ ===== */
     .faq { padding: 100px 0; background: var(--bg-warm); }
-    .faq .micro { color: var(--brand-orange); }
     .faq-list { max-width: 680px; margin: 48px auto 0; }
     .faq-item {
       border-bottom: 1px solid var(--border);
@@ -394,8 +390,8 @@
     }
     .final-cta h2 { color: #fff; font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 300; line-height: 1.15; letter-spacing: -0.04em; }
     .final-cta p { color: rgba(255,255,255,0.85); font-size: 1.063rem; font-weight: 300; margin-top: 12px; max-width: 480px; margin-left: auto; margin-right: auto; }
-    .final-cta .btn-outline-light { border-color: rgba(255,255,255,0.35); color: #fff; }
-    .final-cta .btn-outline-light:hover { background: rgba(255,255,255,0.1); }
+    .final-cta .btn-ghost { border-color: rgba(255,255,255,0.35); color: #fff; }
+    .final-cta .btn-ghost:hover { background: rgba(255,255,255,0.1); }
     .final-cta .hero-cta { margin-top: 36px; }
 
     /* ===== FOOTER ===== */
@@ -421,45 +417,10 @@
 
     /* ===== SECTION INTRO ===== */
     .section-intro { max-width: 600px; margin: 0 auto 48px; text-align: center; }
-    .section-intro .micro { margin-bottom: 12px; }
+    .section-intro .micro { margin-bottom: 12px; color: var(--brand-orange); }
 
-    /* ===== AUTH LINKS ===== */
-    .auth-separator { color: var(--border); font-size: 0.8125rem; }
-
-    /* ===== SCREENSHOT PLACEHOLDER ===== */
-    .screenshot-area {
-      margin-top: 64px;
-      display: flex; justify-content: center;
-    }
-    .screenshot-card {
-      max-width: 860px; width: 100%;
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 40px 32px;
-      box-shadow: rgba(80,50,20,0.12) 0px 50px 80px -40px, rgba(0,0,0,0.06) 0px 20px 40px -20px;
-      text-align: center;
-    }
-    .screenshot-card .app-preview {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      margin-top: 24px;
-    }
-    .preview-step {
-      background: var(--brand-cream);
-      border-radius: 10px;
-      padding: 24px 16px;
-      border: 1px solid #fed7aa;
-      text-align: center;
-    }
-    .preview-step .step-label {
-      font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.06em; color: var(--brand-orange);
-      margin-bottom: 6px;
-    }
-    .preview-step h4 { font-size: 0.9375rem; font-weight: 500; margin-bottom: 4px; }
-    .preview-step p { font-size: 0.8125rem; color: var(--body); line-height: 1.5; }
+    /* ===== MISC ===== */
+    .inline-icon { font-size: 1.25rem; }
   </style>
 </head>
 <body>
@@ -468,7 +429,7 @@
   <nav>
     <div class="container">
       <a href="#" class="logo">
-        <img src="bukadulu.png" alt="BukaDulu" width="32" height="32">
+        <span class="logo-mark">B</span>
         BukaDulu
       </a>
       <div class="nav-links" id="navLinks">
@@ -476,8 +437,7 @@
         <a href="#fitur">Fitur</a>
         <a href="#harga">Harga</a>
         <a href="#faq">FAQ</a>
-        <a href="/login">Masuk</a>
-        <a href="/register" class="btn btn-primary">Coba Gratis</a>
+        <a href="#coba" class="btn btn-primary">Coba Gratis</a>
       </div>
       <button class="nav-toggle" id="navToggle" aria-label="Menu">
         <span></span><span></span><span></span>
@@ -489,57 +449,33 @@
   <section class="hero" id="hero">
     <div class="container">
       <div class="hero-content">
-        <div class="hero-badge fade-in">Riset dan overthinking menjebak. Mulai buktikan sekarang.</div>
+        <div class="hero-badge fade-in">🔥 Riset & Overthinking itu menjebak</div>
         <h1 class="display-hero fade-in delay-1">
           Punya ide jualan makanan?<br>
           <strong style="font-weight:400;color:var(--brand-orange);">Buktikan dulu dalam 14 hari.</strong>
         </h1>
         <p class="body-large fade-in delay-2">
-          Bukan business plan. Bukan analisis AI yang tidak jelas. BukaDulu adalah sistem eksekusi
-          yang memaksa kamu bergerak — dari ide mentah ke bukti pasar nyata — dalam 14 hari.
+          Bukan business plan. Bukan analisis AI yang nggak jelas. BukaDulu adalah sistem eksekusi
+          yang memaksa kamu bergerak — dari ide mentah ke bukti pasar nyata — dalam 14 hari. 
           Gratis untuk sprint pertamamu.
         </p>
         <div class="hero-cta fade-in delay-3">
-          <a href="/register" class="btn btn-primary btn-lg">Cek Ide Gratis</a>
+          <a href="#coba" class="btn btn-primary btn-lg">🚀 Cek Ide Gratis</a>
           <a href="#cara-kerja" class="btn btn-ghost btn-lg">Lihat Cara Kerja</a>
         </div>
-        <div class="hero-stats fade-in delay-4">
-          <div class="stat-item">
-            <div class="stat-number">14 hari</div>
-            <div class="stat-label">Dari ide ke bukti pasar</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number">1-3 SKU</div>
-            <div class="stat-label">Fokus, bukan banyak menu</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number">100%</div>
-            <div class="stat-label">Berdasarkan bukti nyata</div>
-          </div>
-        </div>
       </div>
-
-      <!-- App preview / dashboard mockup -->
-      <div class="screenshot-area fade-in delay-5">
-        <div class="screenshot-card">
-          <div class="micro" style="color:var(--brand-orange);margin-bottom:16px;">Preview Aplikasi</div>
-          <div class="app-preview">
-            <div class="preview-step">
-              <div class="step-label">Langkah 1</div>
-              <h4>Compress Ide</h4>
-              <p>Tulis ide mentah, AI bantu menyusun konsep bisnis yang tajam</p>
-            </div>
-            <div class="preview-step">
-              <div class="step-label">Langkah 2</div>
-              <h4>Fokus Menu</h4>
-              <p>Pilih 1-3 SKU yang paling realistis buat diuji pasar</p>
-            </div>
-            <div class="preview-step">
-              <div class="step-label">Langkah 3</div>
-              <h4>Jalankan Misi</h4>
-              <p>Dapat tugas harian dan upload bukti sebagai progress</p>
-            </div>
-          </div>
+      <div class="hero-stats fade-in delay-4">
+        <div class="stat-item">
+          <div class="stat-number">14 hari</div>
+          <div class="stat-label">Dari ide ke bukti pasar</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">1-3 SKU</div>
+          <div class="stat-label">Fokus, bukan banyak menu</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Berdasarkan bukti nyata</div>
         </div>
       </div>
     </div>
@@ -552,49 +488,37 @@
         <div class="micro">Masalah</div>
         <h2 class="display-large">Kebanyakan calon pebisnis F&B berhenti di kepala sendiri</h2>
         <p class="body-large" style="margin-top:16px;">
-          Bukan karena ide jelek. Tapi karena tidak ada yang memaksa mereka bergerak.
+          Bukan karena ide jelek. Tapi karena nggak ada yang memaksa mereka bergerak.
         </p>
       </div>
       <div class="problem-grid">
         <div class="problem-card fade-in">
-          <div class="problem-card-icon" style="background:rgba(239,68,68,0.15);color:#ef4444;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-          </div>
+          <div class="problem-card-icon" style="background:rgba(239,68,68,0.15);color:#ef4444;">🤯</div>
           <h3>Bingung mulai dari mana</h3>
-          <p>Ide masih campur aduk. Tidak ada langkah pertama yang jelas. Akhirnya cuma dipikirin terus tanpa aksi.</p>
+          <p>Ide masih campur aduk. Nggak ada langkah pertama yang jelas. Akhirnya cuma dipikirin terus tanpa aksi.</p>
         </div>
         <div class="problem-card fade-in delay-1">
-          <div class="problem-card-icon" style="background:rgba(251,191,36,0.15);color:#f59e0b;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
-          </div>
+          <div class="problem-card-icon" style="background:rgba(251,191,36,0.15);color:#f59e0b;">📋</div>
           <h3>Pengen jual banyak menu</h3>
-          <p>Pikiran langsung lompat ke menu 30 item, padahal belum ada satu pelanggan pun yang pernah mencoba.</p>
+          <p>Pikiran langsung lompat ke menu 30 item, padahal belum ada satu pelanggan pun yang pernah nyoba.</p>
         </div>
         <div class="problem-card fade-in delay-2">
-          <div class="problem-card-icon" style="background:rgba(59,130,246,0.15);color:#3b82f6;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-          </div>
-          <h3>Tidak tahu modal realistis</h3>
-          <p>Hitungan masih feeling. Tidak tahu apakah margin cukup, atau jualan rugi dari hari pertama.</p>
+          <div class="problem-card-icon" style="background:rgba(59,130,246,0.15);color:#3b82f6;">💸</div>
+          <h3>Nggak tahu modal realistis</h3>
+          <p>Hitung-hitungan masih feeling. Nggak tahu apakah margin cukup, atau jualan rugi dari hari pertama.</p>
         </div>
         <div class="problem-card fade-in delay-3">
-          <div class="problem-card-icon" style="background:rgba(168,85,247,0.15);color:#a855f7;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          </div>
+          <div class="problem-card-icon" style="background:rgba(168,85,247,0.15);color:#a855f7;">😰</div>
           <h3>Takut gagal, takut malu</h3>
-          <p>Jadi makin parah karena tidak ada yang mengawasi. Proyek tinggal proyek, tidak pernah dieksekusi.</p>
+          <p>Jadi makin parah karena nggak ada yang mengawasi. Proyek tinggal proyek, nggak pernah dieksekusi.</p>
         </div>
         <div class="problem-card fade-in delay-4">
-          <div class="problem-card-icon" style="background:rgba(34,197,94,0.15);color:#22c55e;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-          </div>
+          <div class="problem-card-icon" style="background:rgba(34,197,94,0.15);color:#22c55e;">🔄</div>
           <h3>Gonta-ganti ide terus</h3>
-          <p>Ide A sedikit, ide B sedikit. Tidak pernah fokus cukup lama buat mendapatkan data pasar yang benar.</p>
+          <p>Ide A dikit, ide B dikit. Nggak pernah fokus cukup lama buat dapetin data pasar yang bener.</p>
         </div>
         <div class="problem-card fade-in delay-5">
-          <div class="problem-card-icon" style="background:rgba(249,115,22,0.15);color:#f97316;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-          </div>
+          <div class="problem-card-icon" style="background:rgba(249,115,22,0.15);color:#f97316;">🎭</div>
           <h3>Semangat palsu, nol bukti</h3>
           <p>Yang ada cuma semangat dan keyakinan tanpa data. Padahal modal dan tenaga terbatas.</p>
         </div>
@@ -609,14 +533,14 @@
         <div class="micro">Cara Kerja</div>
         <h2 class="display-large">14 hari. 5 tahap. Satu keputusan.</h2>
         <p class="body-large" style="margin-top:16px;">
-          Tidak perlu ribet. Kami kasih kamu sistem langkah demi langkah.
+          Nggak perlu ribet. Kami kasih kamu sistem langkah demi langkah.
         </p>
       </div>
       <div class="steps">
         <div class="step fade-in">
           <div class="step-number">1</div>
           <h3>Compress Ide</h3>
-          <p>Tulis ide mentah kamu. Sistem akan membantu menyusunnya jadi konsep bisnis yang tajam dan jelas.</p>
+          <p>Tulis ide mentah kamu. Sistem bakal bantu menyusunnya jadi konsep bisnis yang tajam dan jelas.</p>
         </div>
         <div class="step fade-in delay-1">
           <div class="step-number">2</div>
@@ -626,12 +550,12 @@
         <div class="step fade-in delay-2">
           <div class="step-number">3</div>
           <h3>Hitung Realitas</h3>
-          <p>Input bahan, harga, kemasan. Lihat HPP, margin, dan modal awal yang kamu butuhkan — bukan feeling.</p>
+          <p>Input bahan, harga, kemasan. Lihat HPP, margin, dan modal awal yang kamu butuhin — bukan feeling.</p>
         </div>
         <div class="step fade-in delay-3">
           <div class="step-number">4</div>
           <h3>Jalankan Misi</h3>
-          <p>Dapatkan tugas harian: sampling, pre-order, polling, titip jual. Selesai = bukti diupload.</p>
+          <p>Dapetin tugas harian: sampling, pre-order, polling, titip jual. Selesai = bukti diupload.</p>
         </div>
       </div>
       <div style="text-align:center;margin-top:56px;">
@@ -648,7 +572,7 @@
   <section class="features" id="fitur">
     <div class="container">
       <div class="features-header">
-        <div class="micro">Fitur</div>
+        <div class="micro" style="color:var(--brand-orange);margin-bottom:12px;">Fitur</div>
         <h2 class="display-large">Sistem yang memaksa kamu bergerak, bukan cuma baca laporan</h2>
         <p class="body-large" style="margin-top:16px;">
           Setiap fitur dibangun untuk satu tujuan: mengubah niat jadi bukti.
@@ -657,49 +581,37 @@
       <div class="features-grid">
         <div class="feature-card fade-in">
           <div class="feature-tag">AI</div>
-          <div class="feature-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4c0 2-2 4-4 4s-4-2-4-4a4 4 0 0 1 4-4z"/><path d="M2 22c0-4 4.5-6 10-6s10 2 10 6"/></svg>
-          </div>
+          <div class="feature-icon">🧠</div>
           <h3>Idea Compressor</h3>
-          <p>Masukkan ide mentah dalam bahasa sehari-hari. AI akan menyusunnya jadi konsep bisnis, target customer, value proposition, dan asumsi utama.</p>
+          <p>Masukkan ide mentah dalam bahasa sehari-hari. AI bakal menyusunnya jadi konsep bisnis, target customer, value proposition, dan asumsi utama.</p>
         </div>
         <div class="feature-card fade-in delay-1">
           <div class="feature-tag">Fokus</div>
-          <div class="feature-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-          </div>
+          <div class="feature-icon">🎯</div>
           <h3>Menu Focus Engine</h3>
           <p>Pilih 1-3 SKU terbaik. Sistem menilai kompleksitas tiap menu dan merekomendasikan hero product yang paling realistis buat diuji.</p>
         </div>
         <div class="feature-card fade-in delay-2">
           <div class="feature-tag">Angka</div>
-          <div class="feature-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          </div>
+          <div class="feature-icon">📊</div>
           <h3>Reality Ledger</h3>
-          <p>Hitung HPP, harga jual, margin kotor, modal awal minimum, dan titik impas. Sistem akan kasih alarm kalau margin kamu tipis atau berbahaya.</p>
+          <p>Hitung HPP, harga jual, margin kotor, modal awal minimum, dan titik impas. Sistem bakal kasih alarm kalau margin kamu tipis atau berbahaya.</p>
         </div>
         <div class="feature-card fade-in delay-3">
           <div class="feature-tag">Aksi</div>
-          <div class="feature-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-          </div>
+          <div class="feature-icon">🚀</div>
           <h3>Field Missions</h3>
-          <p>Dapatkan misi harian yang konkret: polling, pre-order, sampling, atau wawancara. Tiap misi punya definisi selesai — dan kamu harus buktikan.</p>
+          <p>Dapatin misi harian yang konkret: polling, pre-order, sampling, atau wawancara. Tiap misi punya definisi selesai — dan kamu harus buktikan.</p>
         </div>
         <div class="feature-card fade-in delay-4">
           <div class="feature-tag">Bukti</div>
-          <div class="feature-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-          </div>
+          <div class="feature-icon">📸</div>
           <h3>Evidence Upload</h3>
           <p>Upload foto produk, screenshot chat, daftar pesanan, atau feedback pelanggan. Sistem menilai apakah bukti valid, lemah, atau gagal total.</p>
         </div>
         <div class="feature-card fade-in delay-5">
           <div class="feature-tag">Keputusan</div>
-          <div class="feature-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          </div>
+          <div class="feature-icon">⚖️</div>
           <h3>Founder Courtroom</h3>
           <p>Review adversarial dari 3 peran: calon pembeli, operator dapur, dan reviewer. Menguji kelemahan asumsi kamu sebelum lanjut ke tahap berikutnya.</p>
         </div>
@@ -710,14 +622,14 @@
   <!-- ===== SOCIAL PROOF ===== -->
   <section class="proof" id="testimoni">
     <div class="container">
-      <div class="micro">Testimoni</div>
+      <div class="micro" style="color:var(--brand-orange);margin-bottom:12px;">Testimoni</div>
       <h2 class="display-large" style="max-width:500px;margin:0 auto;">
-        Apa kata mereka yang sudah mencoba?
+        Apa kata mereka yang udah coba?
       </h2>
       <div class="proof-quote fade-in">
         <blockquote>
-          "Awalnya saya pikir ide jualan puding cup saya sudah oke. Ternyata setelah dihitung margin,
-          harga jual saya terlalu rendah. BukaDulu tidak hanya memberi tahu, tapi juga memberi misi untuk
+          "Awalnya saya pikir ide jualan puding cup saya udah oke. Ternyata setelah dihitung margin,
+          harga jual saya terlalu rendah. BukaDulu nggak hanya ngasih tahu, tapi juga ngasih misi untuk
           tes harga langsung ke calon pembeli. Hasilnya? Saya berani pivot ke produk yang lebih
           menguntungkan."
         </blockquote>
@@ -736,10 +648,10 @@
   <section class="pricing" id="harga">
     <div class="container">
       <div class="section-intro">
-        <div class="micro">Harga</div>
+        <div class="micro" style="color:var(--brand-amber);">Harga</div>
         <h2 class="display-large">Mulai gratis. Bayar kalau mau lanjut.</h2>
         <p class="body-text" style="margin-top:16px;">
-          Sprint pertama gratis. Tidak perlu kartu kredit. Cukup buktikan idemu dulu.
+          Sprint pertama gratis. Nggak perlu kartu kredit. Cukup buktikan idemu dulu.
         </p>
       </div>
       <div class="pricing-grid">
@@ -756,7 +668,7 @@
             <li>Evidence upload & review</li>
             <li>Launch readiness score</li>
           </ul>
-          <a href="/register" class="btn btn-ghost">Mulai Gratis</a>
+          <a href="#coba" class="btn btn-ghost">Mulai Gratis</a>
         </div>
         <div class="pricing-card featured fade-in delay-1">
           <div class="pricing-name">Pro Sprint</div>
@@ -771,12 +683,9 @@
             <li>Prioritas review evidence</li>
             <li>Export PDF validasi</li>
           </ul>
-          <a href="/register" class="btn btn-primary">Langganan Sekarang</a>
+          <a href="#coba" class="btn btn-primary">Langganan Sekarang</a>
         </div>
       </div>
-      <p class="caption" style="text-align:center;color:rgba(255,255,255,0.4);margin-top:24px;">
-        Sudah punya akun? <a href="/login" style="color:var(--brand-amber);">Masuk di sini</a>
-      </p>
     </div>
   </section>
 
@@ -784,33 +693,33 @@
   <section class="faq" id="faq">
     <div class="container">
       <div class="section-intro">
-        <div class="micro">FAQ</div>
+        <div class="micro" style="color:var(--brand-orange);">FAQ</div>
         <h2 class="display-large">Pertanyaan yang sering diajukan</h2>
       </div>
       <div class="faq-list">
         <div class="faq-item">
           <button class="faq-question" onclick="toggleFaq(this)">Apa bedanya BukaDulu sama aplikasi business plan generator?</button>
-          <div class="faq-answer">BukaDulu bukan business plan generator. Kami tidak bikin dokumen 40 halaman yang tidak pernah dibaca. Kami bikin kamu bergerak: menentukan SKU, menghitung margin real, menjalankan misi lapangan, dan mengumpulkan bukti. Perbedaan fundamental: kami fokus ke <strong>eksekusi pra-peluncuran</strong>, bukan rencana.</div>
+          <div class="faq-answer">BukaDulu bukan business plan generator. Kami nggak bikin dokumen 40 halaman yang nggak pernah dibaca. Kami bikin kamu bergerak: nentuin SKU, ngitung margin real, jalanin misi lapangan, dan ngumpulin bukti. Beda fundamental: kami fokus ke <strong>eksekusi pra-peluncuran</strong>, bukan rencana.</div>
         </div>
         <div class="faq-item">
           <button class="faq-question" onclick="toggleFaq(this)">Produk saya belum jadi, apa tetap bisa pakai?</button>
-          <div class="faq-answer">Justru itu target kami. Kalau produk kamu sudah jadi dan laku, kamu mungkin tidak butuh BukaDulu lagi. Kami khusus untuk fase sebelum jualan — saat masih bingung, ragu, dan belum punya bukti pasar.</div>
+          <div class="faq-answer">Justru itu target kami. Kalau produk kamu udah jadi dan laku, kamu mungkin nggak butuh BukaDulu lagi. Kami khusus untuk fase sebelum jualan — saat masih bingung, ragu, dan belum punya bukti pasar.</div>
         </div>
         <div class="faq-item">
           <button class="faq-question" onclick="toggleFaq(this)">Apa saya harus bisa masak dulu?</button>
-          <div class="faq-answer">Tidak harus. Banyak founder sukses mulai dari jualan frozen food titipan, snack kemasan, atau minuman sederhana. BukaDulu cocok buat siapa saja yang serius mau jualan makanan atau minuman, terlepas dari skill memasak.</div>
+          <div class="faq-answer">Nggak harus. Banyak founder sukses mulai dari jualan frozen food titipan, snack kemasan, atau minuman sederhana. BukaDulu cocok buat siapa saja yang serius mau jualan makanan/minuman, terlepas dari skill masak.</div>
         </div>
         <div class="faq-item">
-          <button class="faq-question" onclick="toggleFaq(this)">Bagaimana kalau setelah 14 hari ide saya ternyata tidak layak?</button>
-          <div class="faq-answer">Itu <strong>hasil terbaik</strong> yang bisa kamu dapat. Lebih baik tahu dari sekarang dengan modal Rp149 ribu daripada buka gerai, rugi 30 juta, dan tutup 3 bulan kemudian. BukaDulu tegas: "Stop" bukan kegagalan, tapi keputusan bisnis yang cerdas.</div>
+          <button class="faq-question" onclick="toggleFaq(this)">Gimana kalau setelah 14 hari ternyata ide saya nggak layak?</button>
+          <div class="faq-answer">Itu <strong>hasil terbaik</strong> yang bisa kamu dapat. Lebih baik tahu dari sekarang dengan modal Rp149rb daripada buka gerai, rugi 30 juta, dan tutup 3 bulan kemudian. BukaDulu tegas: "Stop" bukan kegagalan, tapi keputusan bisnis yang cerdas.</div>
         </div>
         <div class="faq-item">
           <button class="faq-question" onclick="toggleFaq(this)">Apa ada mentor yang mendampingi?</button>
-          <div class="faq-answer">Untuk MVP, sistem yang menjadi "mentor" kamu: tegas, berbasis data, dan tidak membiarkan kamu menunda. Ke depannya kami akan buka Mentor Dashboard untuk pendamping manusia — termasuk program cohort dengan mentor bisnis sungguhan.</div>
+          <div class="faq-answer">Untuk MVP, sistem yang jadi "mentor" kamu: tegas, berbasis data, dan nggak biarin kamu menunda. Ke depannya kami akan buka Mentor Dashboard untuk pendamping manusia — termasuk program cohort dengan mentor bisnis sungguhan.</div>
         </div>
         <div class="faq-item">
-          <button class="faq-question" onclick="toggleFaq(this)">Ada garansi tidak kalau saya berhasil jualan?</button>
-          <div class="faq-answer">Tidak ada. BukaDulu bukan jaminan sukses. Kami hanya sistem yang memaksimalkan peluang kamu dengan data nyata. Keputusan tetap di tangan kamu. Yang kami jamin: setelah 14 hari, kamu akan punya <strong>bukti, bukan sekadar keyakinan</strong>.</div>
+          <button class="faq-question" onclick="toggleFaq(this)">Ada garansi nggak kalau saya berhasil jualan?</button>
+          <div class="faq-answer">Nggak ada. BukaDulu bukan jaminan sukses. Kami cuma sistem yang memaksimalkan peluang kamu dengan data nyata. Keputusan tetap di tangan kamu. Yang kami jamin: setelah 14 hari, kamu akan punya <strong>bukti, bukan sekadar keyakinan</strong>.</div>
         </div>
       </div>
     </div>
@@ -819,20 +728,20 @@
   <!-- ===== FINAL CTA ===== -->
   <section class="final-cta" id="coba">
     <div class="container">
-      <h2>Berhenti memikirkan. Mulai buktikan.</h2>
-      <p>Ribuan calon pebisnis berhenti di fase kepikiran. Kamu tidak harus seperti mereka.</p>
+      <h2>Berhenti mikir. Mulai buktikan.</h2>
+      <p>Ribuan calon pebisnis berhenti di fase kepikiran. Kamu nggak harus seperti mereka.</p>
       <div class="hero-cta">
-        <a href="/register" class="btn btn-lg btn-white">Cek Ide Saya Gratis</a>
+        <a href="#" class="btn btn-lg" style="background:#fff;color:var(--brand-orange);font-weight:500;">🔥 Cek Ide Saya Gratis</a>
         <a href="#cara-kerja" class="btn btn-outline-light btn-lg">Pelajari Dulu</a>
       </div>
-      <p class="caption" style="color:rgba(255,255,255,0.5);margin-top:20px;">Gratis. Tidak perlu kartu kredit. Sprint pertama full akses.</p>
+      <p class="caption" style="color:rgba(255,255,255,0.5);margin-top:20px;">Gratis. Nggak perlu kartu kredit. Sprint pertama full akses.</p>
     </div>
   </section>
 
   <!-- ===== FOOTER ===== -->
   <footer>
     <div class="container">
-      <p>&copy; 2026 BukaDulu — execution system for pre-launch F&B validation. Built with honesty and evidence. <a href="/login" style="color:rgba(255,255,255,0.4);text-decoration:none;">Masuk</a></p>
+      <p>&copy; 2026 BukaDulu — execution system for pre-launch F&B validation. Built with honesty and evidence.</p>
     </div>
   </footer>
 
