@@ -49,13 +49,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('BukaDulu', style: theme.textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.bold)),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset('assets/bukadulu.png', width: 40, height: 40),
+                      Text('BukaDulu', style: theme.textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.w400)),
+                    ],
+                  ),
                   const SizedBox(height: 8),
-                  Text('Validasi ide F&B-mu dalam 14 hari', style: theme.textTheme.bodyLarge?.copyWith(color: Colors.grey[600])),
+                  Text('Validasi ide F&B-mu dalam 14 hari', style: theme.textTheme.bodyLarge?.copyWith(color: const Color(0xFF57534e), fontWeight: FontWeight.w300)),
                   const SizedBox(height: 48),
                   TextFormField(
                     controller: _emailController,
-                    decoration: const InputDecoration(labelText: 'Email atau Nomor HP', prefixIcon: Icon(Icons.email_outlined)),
+                    decoration: const InputDecoration(labelText: 'Email atau Nomor HP'),
                     keyboardType: TextInputType.emailAddress,
                     validator: (v) => v == null || v.trim().isEmpty ? 'Wajib diisi' : null,
                   ),
@@ -65,7 +71,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     obscureText: _obscurePassword,
                     decoration: InputDecoration(
                       labelText: 'Password',
-                      prefixIcon: const Icon(Icons.lock_outlined),
                       suffixIcon: IconButton(
                         icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
                         onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
@@ -87,7 +92,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   if (authState.hasError)
                     Padding(
                       padding: const EdgeInsets.only(top: 16),
-                      child: Text('${authState.error}', style: const TextStyle(color: Colors.red)),
+                      child: Text('${authState.error}', style: const TextStyle(color: Color(0xFFdc2626))),
                     ),
                   const SizedBox(height: 24),
                   TextButton(

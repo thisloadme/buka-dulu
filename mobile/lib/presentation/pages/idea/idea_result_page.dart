@@ -174,7 +174,7 @@ class _ConceptCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.grey[600])),
+            Text(title, style: TextStyle(color: Color(0xFF57534e), fontSize: 12, fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
             Text(content, style: Theme.of(context).textTheme.bodyMedium),
           ],

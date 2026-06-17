@@ -13,6 +13,7 @@ import 'package:bukadulu/presentation/pages/cost/cost_page.dart';
 import 'package:bukadulu/presentation/pages/mission/mission_board_page.dart';
 import 'package:bukadulu/presentation/pages/evidence/evidence_upload_page.dart';
 import 'package:bukadulu/presentation/pages/score/score_page.dart';
+import 'package:bukadulu/presentation/pages/score/decision_page.dart';
 
 final router = GoRouter(
   initialLocation: '/splash',
@@ -34,5 +35,6 @@ final router = GoRouter(
       missionId: state.pathParameters['missionId']!,
     )),
     GoRoute(path: '/venture/:id/score', builder: (_, state) => ScorePage(ventureId: state.pathParameters['id']!)),
+    GoRoute(path: '/venture/:id/decision', builder: (_, state) => DecisionPage(ventureId: state.pathParameters['id']!)),
   ],
 );

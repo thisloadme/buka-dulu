@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bukadulu/data/datasources/api.dart';
+import 'package:bukadulu/presentation/widgets/common/brand_icons.dart';
 
 class MissionBoardPage extends ConsumerStatefulWidget {
   final String ventureId;
@@ -49,13 +50,13 @@ class _MissionBoardPageState extends ConsumerState<MissionBoardPage> {
     }
   }
 
-  IconData _typeIcon(String t) {
+  Widget _typeIcon(String t, {Color color = Colors.grey, double size = 20}) {
     switch (t) {
-      case 'polling': return Icons.poll;
-      case 'interview': return Icons.chat;
-      case 'sampling': return Icons.restaurant;
-      case 'observation': return Icons.visibility;
-      default: return Icons.task;
+      case 'polling': return BrandIcons.barChart(color: color, size: size);
+      case 'interview': return BrandIcons.chatBubble(color: color, size: size);
+      case 'sampling': return BrandIcons.restaurant(color: color, size: size);
+      case 'observation': return BrandIcons.camera(color: color, size: size);
+      default: return BrandIcons.barChart(color: color, size: size);
     }
   }
 
@@ -79,9 +80,15 @@ class _MissionBoardPageState extends ConsumerState<MissionBoardPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Progress: $done/$total selesai', style: Theme.of(context).textTheme.titleSmall),
+                          Text('Hari ke-$done dari 14', style: const TextStyle(color: Color(0xFF57534e), fontSize: 13, fontWeight: FontWeight.w300)),
                           const SizedBox(height: 8),
-                          LinearProgressIndicator(value: total > 0 ? done / total : 0),
+                          LinearProgressIndicator(
+                            value: total > 0 ? done / total : 0,
+                            backgroundColor: const Color(0xFFe7e5e4),
+                            color: const Color(0xFFea580c),
+                            minHeight: 8,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
                         ],
                       ),
                     );
@@ -105,7 +112,7 @@ class _MissionBoardPageState extends ConsumerState<MissionBoardPage> {
                                 color: _priorityColor(priority).withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Icon(_typeIcon(type), size: 20, color: _priorityColor(priority)),
+                              child: _typeIcon(type, color: _priorityColor(priority), size: 20),
                             ),
                             const SizedBox(width: 8),
                             Expanded(child: Text(m['title'] ?? '', style: const TextStyle(fontWeight: FontWeight.w600))),
@@ -128,11 +135,15 @@ class _MissionBoardPageState extends ConsumerState<MissionBoardPage> {
                             ),
                           ]),
                           const SizedBox(height: 8),
-                          Text(m['description'] ?? '', style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+                          Text(m['description'] ?? '', style: const TextStyle(color: Color(0xFF57534e), fontSize: 13)),
                           const SizedBox(height: 8),
                           Row(children: [
                             if (m['estimated_minutes'] != null)
-                              Text('⏱ ${m['estimated_minutes']} menit', style: TextStyle(fontSize: 12, color: Colors.grey[500])),
+                              Row(children: [
+                                BrandIcons.clock(color: const Color(0xFF57534e), size: 14),
+                                const SizedBox(width: 4),
+                                Text('${m['estimated_minutes']} menit', style: const TextStyle(fontSize: 12, color: Color(0xFF57534e))),
+                              ]),
                             const Spacer(),
                             if (status == 'pending')
                               TextButton(onPressed: () => _accept(m['id']), child: const Text('Terima Misi')),

@@ -129,7 +129,7 @@ class _MenuPageState extends ConsumerState<MenuPage> {
                             return Card(
                               margin: const EdgeInsets.only(bottom: 8),
                               child: ListTile(
-                                leading: isHero ? const Icon(Icons.star, color: Colors.amber) : null,
+                                leading: isHero ? const Icon(Icons.star, color: Color(0xFFf59e0b)) : null,
                                 title: Text(m['name'] ?? ''),
                                 subtitle: Text('${m['status']} ${isHero ? '⭐ Hero' : ''}'),
                                 trailing: Row(
@@ -137,16 +137,16 @@ class _MenuPageState extends ConsumerState<MenuPage> {
                                   children: [
                                     if (!isActive && activeCount < 3)
                                       IconButton(
-                                        icon: const Icon(Icons.check_circle_outline, color: Colors.green),
+                                        icon: const Icon(Icons.check_circle_outline, color: Color(0xFF22c55e)),
                                         onPressed: () => _toggleActive(m['id'], true),
                                       ),
                                     if (isActive)
                                       IconButton(
-                                        icon: const Icon(Icons.undo, color: Colors.orange),
+                                        icon: const Icon(Icons.undo, color: Color(0xFFea580c)),
                                         onPressed: () => _toggleActive(m['id'], false),
                                       ),
                                     IconButton(
-                                      icon: const Icon(Icons.delete_outline, color: Colors.red),
+                                      icon: const Icon(Icons.delete_outline, color: Color(0xFFef4444)),
                                       onPressed: () => _delete(m['id']),
                                     ),
                                   ],

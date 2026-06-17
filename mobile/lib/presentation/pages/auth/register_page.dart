@@ -53,17 +53,17 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Daftar', style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  Text('Daftar', style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w400)),
                   const SizedBox(height: 32),
                   TextFormField(
                     controller: _nameController,
-                    decoration: const InputDecoration(labelText: 'Nama Lengkap', prefixIcon: Icon(Icons.person_outline)),
+                    decoration: const InputDecoration(labelText: 'Nama Lengkap'),
                     validator: (v) => v == null || v.trim().isEmpty ? 'Wajib diisi' : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _emailController,
-                    decoration: const InputDecoration(labelText: 'Email', prefixIcon: Icon(Icons.email_outlined)),
+                    decoration: const InputDecoration(labelText: 'Email'),
                     keyboardType: TextInputType.emailAddress,
                     validator: (v) => v == null || v.trim().isEmpty ? 'Wajib diisi' : null,
                   ),
@@ -73,7 +73,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     obscureText: _obscurePassword,
                     decoration: InputDecoration(
                       labelText: 'Password',
-                      prefixIcon: const Icon(Icons.lock_outlined),
                       suffixIcon: IconButton(
                         icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
                         onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
@@ -85,7 +84,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   TextFormField(
                     controller: _confirmPasswordController,
                     obscureText: true,
-                    decoration: const InputDecoration(labelText: 'Konfirmasi Password', prefixIcon: Icon(Icons.lock_outlined)),
+                    decoration: const InputDecoration(labelText: 'Konfirmasi Password'),
                     validator: (v) => v != _passwordController.text ? 'Password tidak cocok' : null,
                   ),
                   const SizedBox(height: 24),
@@ -102,7 +101,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   if (authState.hasError)
                     Padding(
                       padding: const EdgeInsets.only(top: 16),
-                      child: Text('${authState.error}', style: const TextStyle(color: Colors.red)),
+                      child: Text('${authState.error}', style: const TextStyle(color: Color(0xFFdc2626))),
                     ),
                   const SizedBox(height: 16),
                   TextButton(

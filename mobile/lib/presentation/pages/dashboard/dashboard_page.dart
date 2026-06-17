@@ -4,41 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:bukadulu/presentation/providers/auth_provider.dart';
 import 'package:bukadulu/presentation/providers/venture_provider.dart';
 import 'package:bukadulu/domain/models/venture.dart';
+import 'package:bukadulu/presentation/widgets/common/app_shell.dart';
+import 'package:bukadulu/presentation/widgets/common/brand_icons.dart';
 
 class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
-
-  static const _stageColors = {
-    'draft': Colors.grey,
-    'idea_defined': Colors.blue,
-    'customer_defined': Colors.green,
-    'sku_focused': Colors.orange,
-    'cost_evaluated': Colors.amber,
-    'mission_active': Colors.purple,
-    'evidence_submitted': Colors.pink,
-    'evidence_reviewed': Colors.teal,
-    'ready_to_decide': Colors.indigo,
-    'continue': Colors.green,
-    'repeat': Colors.orange,
-    'pivot': Colors.amber,
-    'stop': Colors.red,
-  };
-
-  static const _stageLabels = {
-    'draft': 'Draft',
-    'idea_defined': 'Ide',
-    'customer_defined': 'Pelanggan',
-    'sku_focused': 'Menu',
-    'cost_evaluated': 'Biaya',
-    'mission_active': 'Misi',
-    'evidence_submitted': 'Bukti',
-    'evidence_reviewed': 'Review',
-    'ready_to_decide': 'Siap',
-    'continue': 'Lanjut',
-    'repeat': 'Ulang',
-    'pivot': 'Pivot',
-    'stop': 'Stop',
-  };
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -73,11 +43,20 @@ class DashboardPage extends ConsumerWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.lightbulb_outline, size: 80, color: Colors.grey[300]),
+                    BrandIcons.barChart(size: 80, color: const Color(0xFFe7e5e4)),
                     const SizedBox(height: 24),
-                    Text('Belum ada ide yang divalidasi', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey[600])),
+                    Text(
+                      'Belum ada ide yang divalidasi',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(color: const Color(0xFF57534e)),
+                    ),
                     const SizedBox(height: 8),
-                    Text('Mulai dengan menekan tombol "Ide Baru"', style: TextStyle(color: Colors.grey[500])),
+                    Text(
+                      'Mulai dengan menekan tombol "Ide Baru"',
+                      style: TextStyle(color: Colors.grey[500]),
+                    ),
                     const SizedBox(height: 24),
                     ElevatedButton.icon(
                       onPressed: () => context.go('/venture/new'),
@@ -94,7 +73,8 @@ class DashboardPage extends ConsumerWidget {
             child: ListView.builder(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
               itemCount: ventures.length,
-              itemBuilder: (context, index) => _VentureCard(venture: ventures[index]),
+              itemBuilder: (context, index) =>
+                  _VentureCard(venture: ventures[index]),
             ),
           );
         },
@@ -111,8 +91,8 @@ class _VentureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stageColor = DashboardPage._stageColors[venture.stage] ?? Colors.grey;
-    final stageLabel = DashboardPage._stageLabels[venture.stage] ?? venture.stage;
+    final stageColor = StageColors.forStage(venture.stage);
+    final stageLabel = StageLabels.forStage(venture.stage);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -127,39 +107,59 @@ class _VentureCard extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: stageColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Text(stageLabel, style: TextStyle(color: stageColor, fontSize: 12, fontWeight: FontWeight.w600)),
+                    child: Text(
+                      stageLabel,
+                      style: TextStyle(
+                        color: stageColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                   const Spacer(),
-                  Text(venture.createdAt.substring(0, 10), style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+                  Text(
+                    venture.createdAt.substring(0, 10),
+                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                  ),
                 ],
               ),
               const SizedBox(height: 12),
-              Text(venture.name, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+              Text(
+                venture.name,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w400),
+              ),
               if (venture.category != null && venture.category!.isNotEmpty) ...[
                 const SizedBox(height: 4),
-                Text(venture.category!, style: TextStyle(color: Colors.grey[600])),
+                Text(
+                  venture.category!,
+                  style: const TextStyle(color: Color(0xFF57534e)),
+                ),
+              ],
+              if (venture.score != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  'Skor: ${venture.score!.toStringAsFixed(0)}',
+                  style: const TextStyle(
+                    color: Color(0xFF57534e),
+                    fontSize: 12,
+                  ),
+                ),
               ],
               const SizedBox(height: 12),
-              LinearProgressIndicator(
-                value: _stageProgress(venture.stage),
-                backgroundColor: Colors.grey[200],
-                color: stageColor,
-              ),
+              StageProgressBar(stage: venture.stage),
             ],
           ),
         ),
       ),
     );
-  }
-
-  double _stageProgress(String stage) {
-    const stages = ['draft', 'idea_defined', 'customer_defined', 'sku_focused', 'cost_evaluated', 'mission_active', 'evidence_submitted', 'evidence_reviewed', 'ready_to_decide'];
-    final idx = stages.indexOf(stage);
-    return idx < 0 ? 0.0 : (idx + 1) / stages.length;
   }
 }

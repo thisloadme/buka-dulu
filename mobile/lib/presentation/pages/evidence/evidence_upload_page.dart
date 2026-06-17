@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bukadulu/data/datasources/api.dart';
+import 'package:bukadulu/presentation/widgets/common/brand_icons.dart';
 
 class EvidenceUploadPage extends ConsumerStatefulWidget {
   final String ventureId;
@@ -98,16 +99,16 @@ class _EvidenceUploadPageState extends ConsumerState<EvidenceUploadPage> {
               Container(
                 height: 120,
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[300]!),
+                  border: Border.all(color: Color(0xFFe7e5e4)),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.camera_alt, size: 40, color: Colors.grey[400]),
+                      BrandIcons.camera(size: 40, color: Color(0xFFa8a29e)),
                       const SizedBox(height: 8),
-                      Text('Fitur foto menyusul', style: TextStyle(color: Colors.grey[500])),
+                      const Text('Ambil foto dari galeri atau kamera', style: TextStyle(color: Color(0xFF57534e))),
                     ],
                   ),
                 ),
@@ -127,13 +128,13 @@ class _EvidenceUploadPageState extends ConsumerState<EvidenceUploadPage> {
               const Divider(),
               const SizedBox(height: 16),
               Row(children: [
-                Icon(
-                  _review!['verdict'] == 'valid' ? Icons.check_circle :
-                  _review!['verdict'] == 'weak' ? Icons.warning : Icons.cancel,
-                  color: _verdictColor(_review!['verdict']),
-                ),
+                _review!['verdict'] == 'valid'
+                    ? BrandIcons.checkCircle(color: _verdictColor(_review!['verdict']))
+                    : _review!['verdict'] == 'weak'
+                        ? BrandIcons.alertTriangle(color: _verdictColor(_review!['verdict']))
+                        : BrandIcons.xCircle(color: _verdictColor(_review!['verdict'])),
                 const SizedBox(width: 8),
-                Text('Verdict: ', style: TextStyle(color: Colors.grey[600])),
+                const Text('Verdict: ', style: TextStyle(color: Color(0xFF57534e))),
                 Text(_review!['verdict'] ?? '', style: TextStyle(
                   fontWeight: FontWeight.w600,
                   color: _verdictColor(_review!['verdict']),

@@ -6,6 +6,7 @@ class Venture {
   final String? region;
   final String stage;
   final int currentVersion;
+  final double? score;
   final String createdAt;
   final String updatedAt;
 
@@ -17,6 +18,7 @@ class Venture {
     this.region,
     required this.stage,
     required this.currentVersion,
+    this.score,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -29,6 +31,7 @@ class Venture {
         region: json['region'] as String?,
         stage: json['stage'] as String,
         currentVersion: json['current_version'] as int,
+        score: (json['score'] as num?)?.toDouble(),
         createdAt: json['created_at'] as String,
         updatedAt: json['updated_at'] as String,
       );

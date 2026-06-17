@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bukadulu/data/datasources/api.dart';
+import 'package:bukadulu/presentation/widgets/common/brand_icons.dart';
 
 class CostPage extends ConsumerStatefulWidget {
   final String ventureId;
@@ -197,9 +198,20 @@ class _CostPageState extends ConsumerState<CostPage> {
                                     color: _marginColor(_summary!['margin_status']).withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  child: Text(
-                                    _summary!['margin_status'] == 'sehat' ? '🟢 Sehat' : _summary!['margin_status'] == 'tipis' ? '🟡 Tipis' : '🔴 Berbahaya',
-                                    style: TextStyle(color: _marginColor(_summary!['margin_status']), fontWeight: FontWeight.w600),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      _summary!['margin_status'] == 'sehat'
+                                          ? BrandIcons.checkCircle(size: 16, color: const Color(0xFF22c55e))
+                                          : _summary!['margin_status'] == 'tipis'
+                                              ? BrandIcons.alertTriangle(size: 16, color: const Color(0xFFf59e0b))
+                                              : BrandIcons.xCircle(size: 16, color: const Color(0xFFef4444)),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        _summary!['margin_status'] == 'sehat' ? 'Sehat' : _summary!['margin_status'] == 'tipis' ? 'Tipis' : 'Berbahaya',
+                                        style: TextStyle(color: _marginColor(_summary!['margin_status']), fontWeight: FontWeight.w600),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -228,7 +240,7 @@ class _CostPageState extends ConsumerState<CostPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(label, style: const TextStyle(color: Colors.grey)),
+        Text(label, style: const TextStyle(color: Color(0xFF57534e))),
         Text(value, style: const TextStyle(fontWeight: FontWeight.w600)),
       ]),
     );

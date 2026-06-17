@@ -57,7 +57,7 @@ class _IdeaCapturePageState extends ConsumerState<IdeaCapturePage> {
             const SizedBox(height: 8),
             Text(
               'Sebutkan produk, target pelanggan, harga, dan lokasi. Semakin detail semakin baik.',
-              style: TextStyle(color: Colors.grey[600]),
+              style: TextStyle(color: Color(0xFF57534e)),
             ),
             const SizedBox(height: 24),
             TextFormField(
@@ -70,7 +70,7 @@ class _IdeaCapturePageState extends ConsumerState<IdeaCapturePage> {
               ),
             ),
             const SizedBox(height: 8),
-            Text('Minimal 20 karakter', style: TextStyle(fontSize: 12, color: Colors.grey[500])),
+            Text('Minimal 20 karakter', style: TextStyle(fontSize: 12, color: Color(0xFF57534e))),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
