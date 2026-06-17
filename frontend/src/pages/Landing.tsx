@@ -232,7 +232,7 @@ export default function Landing() {
           </div>
           <div style={{ textAlign: 'center', marginTop: 56 }}>
             <div className="step" style={{ display: 'inline-block', maxWidth: 260 }}>
-              <div className="step-number" style={{ background: 'linear-gradient(135deg,var(--brand-amber),var(--brand-orange))' }}>5</div>
+              <div className="step-number">5</div>
               <h3>Keputusan Akhir</h3>
               <p>Sistem kasih skor kesiapan + keputusan tegas: <strong>Lanjut, Ulang, Pivot, atau Stop</strong>.</p>
             </div>
