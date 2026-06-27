@@ -30,10 +30,12 @@ func NewRouter(
 		writeJSON(w, http.StatusOK, map[string]string{"status": "ok", "version": "1.0.0"})
 	})
 
-	// Auth
+	// Auth (public)
 	ah := NewAuthHandler(authSvc)
 	r.Post("/api/v1/auth/register", ah.Register)
 	r.Post("/api/v1/auth/login", ah.Login)
+	r.Post("/api/v1/auth/verify-otp", ah.VerifyOTP)
+	r.Post("/api/v1/auth/resend-otp", ah.ResendOTP)
 
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.AuthMiddleware(authSvc))

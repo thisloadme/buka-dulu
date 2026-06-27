@@ -23,9 +23,16 @@ func main() {
 	}
 	defer db.Close()
 
-	if err := config.RunMigrations(db, "migrations/001_init.up.sql"); err != nil {
-		slog.Error("failed to run migrations", "error", err)
-		os.Exit(1)
+	// Run migrations
+	migrations := []string{
+		"migrations/001_init.up.sql",
+		"migrations/002_otp_verification.up.sql",
+	}
+	for _, m := range migrations {
+		if err := config.RunMigrations(db, m); err != nil {
+			slog.Error("failed to run migration", "file", m, "error", err)
+			os.Exit(1)
+		}
 	}
 
 	// Repositories
@@ -46,7 +53,15 @@ func main() {
 	slog.Info("LLM service", "provider", llmSvc.ProviderName())
 
 	// Services
-	authSvc := service.NewAuthService(userRepo, cfg.JWTSecret, cfg.JWTExpiry)
+	emailCfg := service.EmailConfig{
+		Host:     cfg.SMTPHost,
+		Port:     cfg.SMTPPort,
+		User:     cfg.SMTPUser,
+		Password: cfg.SMTPPassword,
+		From:     cfg.SMTPFrom,
+	}
+	emailSvc := service.NewEmailService(emailCfg)
+	authSvc := service.NewAuthService(userRepo, emailSvc, cfg.JWTSecret, cfg.JWTExpiry, cfg.OTPExpiry)
 	ventureSvc := service.NewVentureService(ventureRepo)
 	ideaSvc := service.NewIdeaService(ideaRepo, llmSvc, ventureSvc)
 	customerSvc := service.NewCustomerService(customerRepo, ventureSvc)

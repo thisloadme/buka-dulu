@@ -35,7 +35,12 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         );
     final authState = ref.read(authProvider);
     authState.whenOrNull(data: (data) {
-      if (data != null) context.go('/dashboard');
+      if (data != null && data.token.isNotEmpty) {
+        context.go('/dashboard');
+      } else if (data != null) {
+        // Token empty = pending OTP verification
+        context.go('/verify-otp', extra: _emailController.text.trim());
+      }
     });
   }
 

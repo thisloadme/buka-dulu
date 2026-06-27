@@ -1,9 +1,11 @@
 import 'package:go_router/go_router.dart';
+import 'package:bukadulu/presentation/pages/auth/otp_verify_page.dart';
 import 'package:bukadulu/presentation/pages/splash_screen.dart';
 import 'package:bukadulu/presentation/pages/onboarding_page.dart';
 import 'package:bukadulu/presentation/pages/auth/login_page.dart';
 import 'package:bukadulu/presentation/pages/auth/register_page.dart';
 import 'package:bukadulu/presentation/pages/dashboard/dashboard_page.dart';
+import 'package:bukadulu/presentation/pages/subscription/subscription_page.dart';
 import 'package:bukadulu/presentation/pages/venture/venture_create_page.dart';
 import 'package:bukadulu/presentation/pages/idea/idea_capture_page.dart';
 import 'package:bukadulu/presentation/pages/idea/idea_result_page.dart';
@@ -22,6 +24,11 @@ final router = GoRouter(
     GoRoute(path: '/onboarding', builder: (_, __) => const OnboardingPage()),
     GoRoute(path: '/login', builder: (_, __) => const LoginPage()),
     GoRoute(path: '/register', builder: (_, __) => const RegisterPage()),
+    GoRoute(
+      path: '/verify-otp',
+      builder: (_, state) => OTPVerifyPage(email: state.extra as String),
+    ),
+    GoRoute(path: '/subscription', builder: (_, __) => const SubscriptionPage()),
     GoRoute(path: '/dashboard', builder: (_, __) => const DashboardPage()),
     GoRoute(path: '/venture/new', builder: (_, __) => const VentureCreatePage()),
     GoRoute(path: '/venture/:id/idea', builder: (_, state) => IdeaCapturePage(ventureId: state.pathParameters['id']!)),

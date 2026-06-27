@@ -21,9 +21,16 @@ type Config struct {
 	LLMAPIKey   string
 	LLMModel    string
 
-	StorageType string
-	StoragePath string
-}
+		StorageType string
+		StoragePath string
+
+		SMTPHost     string
+		SMTPPort     int
+		SMTPUser     string
+		SMTPPassword string
+		SMTPFrom     string
+		OTPExpiry    int // minutes
+	}
 
 func Load() *Config {
 	loadDotEnv()
@@ -41,6 +48,13 @@ func Load() *Config {
 
 		StorageType: getEnv("STORAGE_TYPE", "local"),
 		StoragePath: getEnv("STORAGE_PATH", "./storage/evidence"),
+
+		SMTPHost:     getEnv("SMTP_HOST", "smtp.sendgrid.net"),
+		SMTPPort:     getEnvInt("SMTP_PORT", 587),
+		SMTPUser:     getEnv("SMTP_USER", "apikey"),
+		SMTPPassword: getEnv("SMTP_PASSWORD", ""),
+		SMTPFrom:     getEnv("SMTP_FROM", "noreply@bukadulu.id"),
+		OTPExpiry:    getEnvInt("OTP_EXPIRY_MINUTES", 10),
 	}
 
 	if cfg.DatabaseURL == "" {

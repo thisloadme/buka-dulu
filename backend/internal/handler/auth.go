@@ -26,8 +26,8 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.Email == "" && req.Phone == "" {
-		writeJSON(w, http.StatusUnprocessableEntity, map[string]string{"error": "email or phone required"})
+	if req.Email == "" {
+		writeJSON(w, http.StatusUnprocessableEntity, map[string]string{"error": "email is required for registration"})
 		return
 	}
 	if req.FullName == "" {
@@ -58,11 +58,55 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := h.authSvc.Login(&req)
 	if err != nil {
-		writeJSON(w, http.StatusUnauthorized, map[string]string{"error": "invalid email/phone or password"})
+		// Distinguish between "not verified" and "wrong password"
+		writeJSON(w, http.StatusUnauthorized, map[string]string{"error": err.Error()})
 		return
 	}
 
 	writeJSON(w, http.StatusOK, resp)
+}
+
+func (h *AuthHandler) VerifyOTP(w http.ResponseWriter, r *http.Request) {
+	var req domain.OTPVerifyRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeJSON(w, http.StatusUnprocessableEntity, map[string]string{"error": "invalid request body"})
+		return
+	}
+
+	if req.Email == "" || req.OTP == "" {
+		writeJSON(w, http.StatusUnprocessableEntity, map[string]string{"error": "email and otp are required"})
+		return
+	}
+
+	resp, err := h.authSvc.VerifyOTP(&req)
+	if err != nil {
+		slog.Error("verify OTP failed", "error", err)
+		writeJSON(w, http.StatusUnauthorized, map[string]string{"error": err.Error()})
+		return
+	}
+
+	writeJSON(w, http.StatusOK, resp)
+}
+
+func (h *AuthHandler) ResendOTP(w http.ResponseWriter, r *http.Request) {
+	var req domain.OTPResendRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeJSON(w, http.StatusUnprocessableEntity, map[string]string{"error": "invalid request body"})
+		return
+	}
+
+	if req.Email == "" {
+		writeJSON(w, http.StatusUnprocessableEntity, map[string]string{"error": "email is required"})
+		return
+	}
+
+	if err := h.authSvc.ResendOTP(&req); err != nil {
+		slog.Error("resend OTP failed", "error", err)
+		writeJSON(w, http.StatusConflict, map[string]string{"error": err.Error()})
+		return
+	}
+
+	writeJSON(w, http.StatusOK, map[string]string{"message": "OTP sent to your email"})
 }
 
 func GetUserID(ctx context.Context) string {

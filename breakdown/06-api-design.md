@@ -24,21 +24,59 @@
 Request:
 {
     "full_name": "Budi Santoso",
-    "email": "budi@email.com",        // optional, either email or phone
-    "phone": "+6281234567890",         // optional
+    "email": "budi@email.com",        // required (OTP verification)
     "password": "min8char",
     "role": "founder"                  // default: founder
 }
 
 Response 201:
 {
-    "user": { "id", "full_name", "email", "phone", "role", "created_at" },
-    "token": "eyJhbGci..."
+    "user": { "id", "full_name", "email", "role", "status": "pending", "created_at" },
+    "token": "",                       // empty — user must verify OTP first
+    "expires_at": "2026-06-09T10:30:00Z"  // OTP expiry
 }
 
 Errors:
-- 409: Email/phone already registered
-- 422: Validation failed (password too short, missing email/phone)
+- 409: Email already registered
+- 422: Validation failed
+```
+
+### POST /auth/verify-otp
+```
+Request:
+{
+    "email": "budi@email.com",
+    "otp": "123456"
+}
+
+Response 200:
+{
+    "user": { "id", "full_name", "email", "role", "status": "active" },
+    "token": "eyJhbGci...",
+    "expires_at": "2026-06-09T10:30:00Z"
+}
+
+Errors:
+- 401: Invalid OTP
+- 401: OTP expired
+- 409: Account already verified
+```
+
+### POST /auth/resend-otp
+```
+Request:
+{
+    "email": "budi@email.com"
+}
+
+Response 200:
+{
+    "message": "OTP sent to your email"
+}
+
+Errors:
+- 404: User not found
+- 409: Account already verified
 ```
 
 ### POST /auth/login

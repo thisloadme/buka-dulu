@@ -31,6 +31,16 @@ class AuthApi {
     return r.data;
   }
 
+  Future<Map<String, dynamic>> verifyOTP({required String email, required String otp}) async {
+    final r = await _dio.post('/auth/verify-otp', data: {'email': email, 'otp': otp});
+    return r.data;
+  }
+
+  Future<Map<String, dynamic>> resendOTP({required String email}) async {
+    final r = await _dio.post('/auth/resend-otp', data: {'email': email});
+    return r.data;
+  }
+
   // ─── Venture ───
   Future<Map<String, dynamic>> createVenture({required String name, String? category, String? region}) async {
     final r = await _dio.post('/ventures', data: {'name': name, 'category': category, 'region': region}, options: Options(headers: _headers));

@@ -17,9 +17,10 @@
 | | 2. Password minimal 8 karakter |
 | | 3. Validasi format email dan nomor telepon |
 | | 4. Role otomatis "founder" saat registrasi |
-| | 5. Email/telepon unik — duplicate ditolak dengan pesan jelas |
-| | 6. Account langsung aktif (tanpa verifikasi di MVP) |
-| | 7. Error handling untuk koneksi terputus |
+| | 5. Email unik — duplicate ditolak dengan pesan jelas |
+| | 6. **OTP email verification** — OTP dikirim ke email, akun pending sampai diverifikasi |
+| | 7. Resend OTP dengan cooldown 60 detik |
+| | 8. Error handling untuk koneksi terputus |
 
 ### US-002 Login & Logout
 | | |
