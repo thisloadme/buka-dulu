@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import AppNavbar from '../components/AppNavbar'
 import LottiePlayer from '../components/LottiePlayer'
-import { getIdea, processIdea, confirmIdea, updateIdea, Idea } from '../api/idea'
+import { getIdea, processIdea, confirmIdea, updateIdea, refineIdea, Idea } from '../api/idea'
 import { createOrder } from '../api/payment'
 
 function parseList(s?: string): string[] {
@@ -29,6 +29,11 @@ export default function IdeaResult() {
   const [concept, setConcept] = useState('')
   const [customer, setCustomer] = useState('')
   const [value, setValue] = useState('')
+
+  // AI refinement (iteration) chat
+  const [instruction, setInstruction] = useState('')
+  const [refining, setRefining] = useState(false)
+  const [lastSummary, setLastSummary] = useState('')
 
   const load = async () => {
     setLoading(true)
@@ -102,6 +107,28 @@ export default function IdeaResult() {
       setError(err.message || 'Gagal mengunci ide.')
     } finally {
       setConfirming(false)
+    }
+  }
+
+  const handleRefine = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    const text = instruction.trim()
+    if (text.length < 3) return
+    setRefining(true)
+    setLastSummary('')
+    try {
+      const result = await refineIdea(ventureId, text)
+      setIdea(result.idea)
+      setConcept(result.idea.one_line_concept || '')
+      setCustomer(result.idea.target_customer || '')
+      setValue(result.idea.value_proposition || '')
+      setLastSummary(result.summary || 'Konsep diperbarui.')
+      setInstruction('')
+    } catch (err: any) {
+      setError(err.message || 'Gagal melakukan iterasi AI.')
+    } finally {
+      setRefining(false)
     }
   }
 
@@ -238,6 +265,30 @@ export default function IdeaResult() {
                 {confirming ? 'Memproses...' : idea?.is_locked ? 'Ide Dikunci' : 'Kunci Ide & Selesai'}
               </button>
             </div>
+
+            {!idea?.is_locked && (
+              <div className="refine-box" style={{ marginTop: 24 }}>
+                <div className="micro">Iterasi dengan AI</div>
+                <p className="caption" style={{ marginTop: 4, marginBottom: 12 }}>
+                  Minta AI menyempurnakan konsep — misal: "buat target pelanggan lebih spesifik", "tambah asumsi harga", "fokuskan ke menu utama".
+                </p>
+                {lastSummary && (
+                  <div className="refine-summary">{lastSummary}</div>
+                )}
+                <form onSubmit={handleRefine} className="refine-form">
+                  <input
+                    type="text"
+                    value={instruction}
+                    onChange={e => setInstruction(e.target.value)}
+                    placeholder="Tulis instruksi untuk AI..."
+                    disabled={refining}
+                  />
+                  <button type="submit" className="btn btn-primary" disabled={refining || instruction.trim().length < 3}>
+                    {refining ? 'Memproses...' : 'Kirim ke AI'}
+                  </button>
+                </form>
+              </div>
+            )}
           </>
         )}
       </div>

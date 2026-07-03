@@ -62,6 +62,104 @@ Buatkan struktur konsep bisnis dalam format JSON yang sudah ditentukan.`, rawInp
 	return &concept, nil
 }
 
+// RefineIdeaResult is the structured output of an AI refinement iteration.
+type RefineIdeaResult struct {
+	OneLineConcept   string   `json:"one_line_concept"`
+	TargetCustomer   string   `json:"target_customer"`
+	ValueProposition string   `json:"value_proposition"`
+	KeyAssumptions   []string `json:"key_assumptions"`
+	EarlyRisks       []string `json:"early_risks"`
+	Summary          string   `json:"summary"`
+}
+
+// RefineIdea runs one AI iteration over the current idea concept, applying the
+// user's instruction while preserving the idea's core identity. Conversation
+// history is threaded so multi-turn refinement keeps context.
+//
+// The system prompt strictly bounds the assistant to the user's F&B business
+// idea and forbids any other topic.
+func (s *LLMService) RefineIdea(rawInput, currentConcept string, history []Message, instruction string) (*RefineIdeaResult, error) {
+	systemPrompt := `Kamu adalah asisten validasi ide bisnis F&B (makanan & minuman) bernama BukaDulu.
+Tujuanmu satu-satunya: membantu pengguna menyempurnakan dan mempertajam KONSEP IDE BISNIS F&B mereka.
+
+ATURAN MUTLAK (tidak bisa dinegosiasikan):
+1. HANYA membahas ide bisnis F&B pengguna. Setiap topik di luar itu (programming, politik, agama, topik pribadi, permintaan tulis kode, dll) TOLAK dengan sopan dan arahkan kembali ke ide F&B mereka.
+2. Jawab SELALU dalam Bahasa Indonesia.
+3. Pertahankan identitas inti ide (produk utama, niche). Jangan mengganti ide menjadi bisnis yang sama sekali berbeda.
+4. Setiap respons HARUS berupa JSON valid dengan format:
+{
+  "one_line_concept": "Konsep satu kalimat (diperbarui jika perlu)",
+  "target_customer": "Target pelanggan yang tajam",
+  "value_proposition": "Nilai unik yang ditawarkan",
+  "key_assumptions": ["asumsi 1", "asumsi 2", ...],
+  "early_risks": ["risiko 1", "risiko 2", ...],
+  "summary": "Ringkasan singkat perubahan/alasan dalam 1-2 kalimat"
+}
+5. Jangan menambahkan teks di luar JSON. Jangan bungkus dengan markdown code fence.`
+
+	msgs := []Message{{Role: "system", Content: systemPrompt}}
+
+	// Konteks ide asli (raw) + konsep saat ini sebagai pegangan
+	contextMsg := fmt.Sprintf(`KONTEKS IDE ASLI PENGGUNA:
+"%s"
+
+KONSEP SAAT INI:
+%s
+
+Pegang konteks ide di atas sebagai batas pembahasan.`, rawInput, ifEmpty(currentConcept, "(belum ada konsep)"))
+	msgs = append(msgs, Message{Role: "system", Content: contextMsg})
+
+	// Riwayat percakapan sebelumnya (role user/assistant bergantian)
+	msgs = append(msgs, history...)
+
+	// Instruksi iterasi ini
+	msgs = append(msgs, Message{Role: "user", Content: instruction})
+
+	req := ChatRequest{
+		Temperature:    0.4,
+		ResponseFormat: &ResponseFormat{Type: "json_object"},
+		Messages:       msgs,
+	}
+
+	content, err := s.provider.Chat(req)
+	if err != nil {
+		return nil, fmt.Errorf("LLM refine call failed: %w", err)
+	}
+
+	// Bersihkan kemungkinan code fence meski sudah dilarang
+	cleaned := stripCodeFence(content)
+
+	var result RefineIdeaResult
+	if err := json.Unmarshal([]byte(cleaned), &result); err != nil {
+		return nil, fmt.Errorf("parse LLM refine response: %w (raw: %s)", err, truncate(cleaned, 200))
+	}
+	return &result, nil
+}
+
+func ifEmpty(s, fallback string) string {
+	if s == "" {
+		return fallback
+	}
+	return s
+}
+
+func stripCodeFence(s string) string {
+	out := s
+	for _, fence := range []string{"```json", "```"} {
+		for len(out) >= len(fence) && out[:len(fence)] == fence {
+			out = out[len(fence):]
+		}
+	}
+	return out
+}
+
+func truncate(s string, n int) string {
+	if len(s) <= n {
+		return s
+	}
+	return s[:n] + "..."
+}
+
 // ProviderName returns the name of the active provider
 func (s *LLMService) ProviderName() string {
 	return s.provider.Name()

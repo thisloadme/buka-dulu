@@ -11,6 +11,9 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_users_provider_uid ON users(provider, prov
 -- Freemium quota: how many free idea validations the user has consumed
 ALTER TABLE users ADD COLUMN IF NOT EXISTS free_quota_used INT NOT NULL DEFAULT 0;
 
+-- Conversation history for AI idea refinement iterations (JSON array of {role,content})
+ALTER TABLE ideas ADD COLUMN IF NOT EXISTS refine_history TEXT;
+
 -- Payment orders (KlikQris dynamic QRIS)
 CREATE TABLE IF NOT EXISTS orders (
     id TEXT PRIMARY KEY,

@@ -125,7 +125,22 @@ func (s *IdeaService) GetByVenture(ventureID, userID string) (*domain.Idea, erro
 	if err != nil {
 		return nil, err
 	}
-	return s.ideaRepo.FindByVenture(ventureID)
+	idea, err := s.ideaRepo.FindByVenture(ventureID)
+	if err == domain.ErrNotFound {
+		return nil, nil
+	}
+	return idea, err
+}
+
+// GetByVentureSafe returns the idea for a venture without ownership check.
+// Use only when the caller has already filtered by owner (e.g. ListByOwner).
+// Returns nil, nil if no idea exists (instead of an error) for graceful aggregation.
+func (s *IdeaService) GetByVentureSafe(ventureID string) (*domain.Idea, error) {
+	idea, err := s.ideaRepo.FindByVenture(ventureID)
+	if err == domain.ErrNotFound {
+		return nil, nil
+	}
+	return idea, err
 }
 
 func (s *IdeaService) Update(ventureID, userID string, req *domain.UpdateIdeaRequest) (*domain.Idea, error) {
@@ -182,4 +197,70 @@ func (s *IdeaService) Confirm(ventureID, userID string) (*domain.Idea, error) {
 	}
 
 	return idea, nil
+}
+
+// Refine runs one AI iteration on the idea using the user's instruction,
+// preserves conversation history between turns, and applies the updated concept.
+// Only allowed after the idea has been processed once (status 'done').
+func (s *IdeaService) Refine(ventureID, userID, instruction string) (*domain.Idea, *RefineIdeaResult, error) {
+	idea, err := s.GetByVenture(ventureID, userID)
+	if err != nil {
+		return nil, nil, err
+	}
+	if idea == nil {
+		return nil, nil, fmt.Errorf("idea not found: %w", domain.ErrNotFound)
+	}
+	if idea.IsLocked {
+		return nil, nil, fmt.Errorf("idea is locked, cannot refine: %w", domain.ErrInvalidInput)
+	}
+	if idea.Status != "done" || idea.OneLineConcept == nil {
+		return nil, nil, fmt.Errorf("idea must be processed first: %w", domain.ErrStageGate)
+	}
+
+	// Reconstruct conversation history
+	history := []Message{}
+	if idea.RefineHistory != nil && *idea.RefineHistory != "" {
+		_ = json.Unmarshal([]byte(*idea.RefineHistory), &history)
+	}
+
+	currentConcept := ""
+	if idea.OneLineConcept != nil {
+		currentConcept = *idea.OneLineConcept
+	}
+
+	result, err := s.llmService.RefineIdea(idea.RawInput, currentConcept, history, instruction)
+	if err != nil {
+		return nil, nil, fmt.Errorf("AI refine failed: %w", err)
+	}
+
+	// Apply updated fields
+	idea.OneLineConcept = &result.OneLineConcept
+	idea.TargetCustomer = &result.TargetCustomer
+	idea.ValueProposition = &result.ValueProposition
+	assumptionsJSON, _ := json.Marshal(result.KeyAssumptions)
+	risksJSON, _ := json.Marshal(result.EarlyRisks)
+	assumptionsStr := string(assumptionsJSON)
+	risksStr := string(risksJSON)
+	idea.KeyAssumptions = &assumptionsStr
+	idea.EarlyRisks = &risksStr
+
+	// Append this turn to history: user instruction + assistant summary
+	history = append(history,
+		Message{Role: "user", Content: instruction},
+		Message{Role: "assistant", Content: result.Summary + "\n\nKonsep diperbarui: " + result.OneLineConcept},
+	)
+	// Ponytail: cap history to last 20 turns to bound token growth
+	if len(history) > 20 {
+		history = history[len(history)-20:]
+	}
+	historyJSON, _ := json.Marshal(history)
+	historyStr := string(historyJSON)
+	idea.RefineHistory = &historyStr
+	idea.UpdatedAt = time.Now().UTC().Format(time.RFC3339)
+
+	if err := s.ideaRepo.Update(idea); err != nil {
+		return nil, nil, fmt.Errorf("update idea after refine: %w", err)
+	}
+
+	return idea, result, nil
 }

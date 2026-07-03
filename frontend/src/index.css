@@ -618,3 +618,71 @@ footer {
   border-radius: 12px; border: 1px solid var(--border);
   display: block;
 }
+
+/* ===== EDIT TEXTAREA (in idea result cards) ===== */
+.card-body textarea {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 8px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--heading);
+  background: var(--bg-warm);
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.card-body textarea:focus {
+  border-color: var(--brand-orange);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(234,88,12,0.12);
+}
+.card-body textarea::placeholder { color: #a8a29e; }
+
+/* ===== REFINE / ITERATION BOX ===== */
+.refine-box {
+  background: var(--brand-cream);
+  border: 1px solid #fed7aa;
+  border-radius: 14px;
+  padding: 20px 24px;
+}
+.refine-summary {
+  background: #fff;
+  border: 1px solid #fed7aa;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  font-size: 0.9375rem;
+  color: var(--heading);
+  line-height: 1.55;
+}
+.refine-form {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+.refine-form input {
+  flex: 1;
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  color: var(--heading);
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.refine-form input:focus {
+  border-color: var(--brand-orange);
+  box-shadow: 0 0 0 3px rgba(234,88,12,0.12);
+}
+.refine-form input::placeholder { color: #a8a29e; }
+.refine-form .btn { white-space: nowrap; }
+@media (max-width: 600px) {
+  .refine-form { flex-direction: column; }
+}

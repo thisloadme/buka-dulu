@@ -123,7 +123,12 @@ func (h *PaymentHandler) History(w http.ResponseWriter, r *http.Request) {
 	}
 	items := make([]historyItem, 0, len(ventures))
 	for _, v := range ventures {
+		// Toleran: venture tanpa ide → idea nil, jangan gagal seluruh history
 		idea, _ := h.ideaSvc.GetByVenture(v.ID, userID)
+		if idea == nil {
+			// fallback: cek repo langsung (skip ownership re-check sudah dilakukan di ListByOwner)
+			idea, _ = h.ideaSvc.GetByVentureSafe(v.ID)
+		}
 		items = append(items, historyItem{Venture: v, Idea: idea})
 	}
 	writeJSON(w, http.StatusOK, map[string]interface{}{"items": items})

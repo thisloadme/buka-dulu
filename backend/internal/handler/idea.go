@@ -112,3 +112,32 @@ func (h *IdeaHandler) Confirm(w http.ResponseWriter, r *http.Request) {
 
 	writeJSON(w, http.StatusOK, idea)
 }
+
+// Refine runs one AI iteration over the current idea using the user's instruction.
+func (h *IdeaHandler) Refine(w http.ResponseWriter, r *http.Request) {
+	userID := GetUserID(r.Context())
+	ventureID := chi.URLParam(r, "id")
+
+	var req struct {
+		Instruction string `json:"instruction"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeJSON(w, http.StatusUnprocessableEntity, map[string]string{"error": "invalid request body"})
+		return
+	}
+	if len(req.Instruction) < 3 {
+		writeJSON(w, http.StatusUnprocessableEntity, map[string]string{"error": "instruction too short"})
+		return
+	}
+
+	idea, result, err := h.ideaSvc.Refine(ventureID, userID, req.Instruction)
+	if err != nil {
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+
+	writeJSON(w, http.StatusOK, map[string]interface{}{
+		"idea":    idea,
+		"summary": result.Summary,
+	})
+}

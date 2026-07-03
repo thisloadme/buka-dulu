@@ -109,13 +109,29 @@ export async function confirmIdea(ventureId: string): Promise<Idea> {
 }
 
 export async function updateIdea(ventureId: string, patch: Partial<Idea>): Promise<Idea> {
-  const res = await fetch(`${API_BASE}/ventures/${ventureId}/idea`, {
-    method: 'PUT',
-    headers: authHeader(),
-    body: JSON.stringify(patch),
-  })
-  if (!res.ok) throw new Error(await parseError(res))
-  return res.json()
+	const res = await fetch(`${API_BASE}/ventures/${ventureId}/idea`, {
+		method: 'PUT',
+		headers: authHeader(),
+		body: JSON.stringify(patch),
+	})
+	if (!res.ok) throw new Error(await parseError(res))
+	return res.json()
+}
+
+// Refine runs one AI iteration with the user's instruction; preserves context.
+export interface RefineResult {
+	idea: Idea
+	summary: string
+}
+
+export async function refineIdea(ventureId: string, instruction: string): Promise<RefineResult> {
+	const res = await fetch(`${API_BASE}/ventures/${ventureId}/idea/refine`, {
+		method: 'POST',
+		headers: authHeader(),
+		body: JSON.stringify({ instruction }),
+	})
+	if (!res.ok) throw new Error(await parseError(res))
+	return res.json()
 }
 
 export interface HistoryItem {

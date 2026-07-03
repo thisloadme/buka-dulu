@@ -14,6 +14,7 @@ type Idea struct {
 	Status           string  `db:"status" json:"status"`
 	AiRawInput       *string `db:"ai_raw_input" json:"-"`
 	AiRawOutput      *string `db:"ai_raw_output" json:"-"`
+	RefineHistory    *string `db:"refine_history" json:"refine_history,omitempty"`
 	CreatedAt        string  `db:"created_at" json:"created_at"`
 	UpdatedAt        string  `db:"updated_at" json:"updated_at"`
 }

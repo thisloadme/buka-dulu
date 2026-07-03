@@ -71,6 +71,7 @@ func NewRouter(
 		r.Get("/api/v1/ventures/{id}/idea", ih.Get)
 		r.Put("/api/v1/ventures/{id}/idea", ih.Update)
 		r.Post("/api/v1/ventures/{id}/idea/process", ih.Process)
+		r.Post("/api/v1/ventures/{id}/idea/refine", ih.Refine)
 		r.Post("/api/v1/ventures/{id}/idea/confirm", ih.Confirm)
 
 		// Sprint 2
