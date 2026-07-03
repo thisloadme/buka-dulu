@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:bukadulu/presentation/widgets/common/brand_icons.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -91,13 +92,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           width: 100,
                           height: 100,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFfff7ed),
+                            color: BrandColors.brandCream,
                             borderRadius: BorderRadius.circular(28),
                           ),
                           child: Icon(
                             slide.icon,
                             size: 48,
-                            color: const Color(0xFFea580c),
+                            color: BrandColors.brandOrange,
                           ),
                         ),
                         const SizedBox(height: 40),
@@ -143,8 +144,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(4),
                     color: _currentPage == i
-                        ? const Color(0xFFea580c)
-                        : Colors.grey[300],
+                        ? BrandColors.brandOrange
+                        : BrandColors.border,
                   ),
                 ),
               ),
@@ -162,16 +163,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           height: 50,
                           child: ElevatedButton(
                             onPressed: _goToRegister,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFea580c),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              elevation: 0,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: BrandColors.brandOrange,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            child: const Text(
-                              'Mulai Sekarang',
+                            elevation: 0,
+                          ),
+                          child: const Text(
+                            'Mulai Sekarang',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -184,7 +185,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           onPressed: _goToLogin,
                           child: const Text(
                             'Sudah punya akun? Masuk',
-                            style: TextStyle(color: Color(0xFFea580c)),
+                            style: TextStyle(color: BrandColors.brandOrange),
                           ),
                         ),
                       ],
@@ -200,7 +201,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFea580c),
+                          backgroundColor: BrandColors.brandOrange,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),

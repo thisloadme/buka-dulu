@@ -13,6 +13,7 @@ var (
 	ErrInternal       = errors.New("internal server error")
 	ErrDuplicateEntry = errors.New("duplicate entry")
 	ErrTokenExpired   = errors.New("token expired")
+	ErrPaymentRequired = errors.New("payment required")
 )
 
 type AppError struct {

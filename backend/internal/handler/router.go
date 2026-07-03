@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/riyantobudi/bukadulu/internal/middleware"
+	"github.com/riyantobudi/bukadulu/internal/repository"
 	"github.com/riyantobudi/bukadulu/internal/service"
 )
 
@@ -19,6 +20,8 @@ func NewRouter(
 	evidenceSvc *service.EvidenceService,
 	scoringSvc *service.ScoringService,
 	mentorSvc *service.MentorService,
+	paymentSvc *service.PaymentService,
+	userRepo *repository.UserRepository,
 ) http.Handler {
 	r := chi.NewRouter()
 
@@ -30,12 +33,28 @@ func NewRouter(
 		writeJSON(w, http.StatusOK, map[string]string{"status": "ok", "version": "1.0.0"})
 	})
 
+	// Payment / SSO / quota handler
+	ph := NewPaymentHandler(paymentSvc, authSvc, ventureSvc, ideaSvc, userRepo)
+
 	// Auth (public)
 	ah := NewAuthHandler(authSvc)
 	r.Post("/api/v1/auth/register", ah.Register)
 	r.Post("/api/v1/auth/login", ah.Login)
 	r.Post("/api/v1/auth/verify-otp", ah.VerifyOTP)
 	r.Post("/api/v1/auth/resend-otp", ah.ResendOTP)
+	r.Post("/api/v1/auth/google", ph.GoogleLogin)
+
+	// KlikQris webhook (public, signature-checked in service)
+	r.Post("/api/v1/payments/webhook", ph.Webhook)
+
+	// Quota + payments + history (auth)
+	r.Group(func(r chi.Router) {
+		r.Use(middleware.AuthMiddleware(authSvc))
+		r.Get("/api/v1/auth/quota", ph.Quota)
+		r.Post("/api/v1/payments/order", ph.CreateOrder)
+		r.Get("/api/v1/payments/order/{id}", ph.GetOrder)
+		r.Get("/api/v1/history", ph.History)
+	})
 
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.AuthMiddleware(authSvc))

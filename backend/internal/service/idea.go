@@ -14,13 +14,15 @@ type IdeaService struct {
 	ideaRepo   *repository.IdeaRepository
 	llmService *LLMService
 	ventureSvc *VentureService
+	paymentSvc *PaymentService
 }
 
-func NewIdeaService(ideaRepo *repository.IdeaRepository, llmService *LLMService, ventureSvc *VentureService) *IdeaService {
+func NewIdeaService(ideaRepo *repository.IdeaRepository, llmService *LLMService, ventureSvc *VentureService, paymentSvc *PaymentService) *IdeaService {
 	return &IdeaService{
 		ideaRepo:   ideaRepo,
 		llmService: llmService,
 		ventureSvc: ventureSvc,
+		paymentSvc: paymentSvc,
 	}
 }
 
@@ -72,6 +74,17 @@ func (s *IdeaService) Process(ventureID, userID string) (*domain.Idea, error) {
 		return nil, fmt.Errorf("idea already locked: %w", domain.ErrInvalidInput)
 	}
 
+	// Paywall: only allow if user has free quota OR a paid order for this venture
+	if s.paymentSvc != nil {
+		ok, err := s.paymentSvc.HasAccess(userID, ventureID, "idea_validation")
+		if err != nil {
+			return nil, fmt.Errorf("check access: %w", err)
+		}
+		if !ok {
+			return nil, fmt.Errorf("payment required: %w", domain.ErrPaymentRequired)
+		}
+	}
+
 	idea.Status = "processing"
 	s.ideaRepo.Update(idea)
 
@@ -97,6 +110,11 @@ func (s *IdeaService) Process(ventureID, userID string) (*domain.Idea, error) {
 
 	if err := s.ideaRepo.Update(idea); err != nil {
 		return nil, fmt.Errorf("update idea: %w", err)
+	}
+
+	// Consume quota / fulfill order after successful AI processing
+	if s.paymentSvc != nil {
+		_ = s.paymentSvc.Fulfill(userID, ventureID, "idea_validation")
 	}
 
 	return idea, nil

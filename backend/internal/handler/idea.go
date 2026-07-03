@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -52,6 +53,14 @@ func (h *IdeaHandler) Process(w http.ResponseWriter, r *http.Request) {
 
 	idea, err := h.ideaSvc.Process(ventureID, userID)
 	if err != nil {
+		if errors.Is(err, domain.ErrPaymentRequired) {
+			writeJSON(w, http.StatusPaymentRequired, map[string]interface{}{
+				"error":     "payment_required",
+				"venture_id": ventureID,
+				"purpose":   "idea_validation",
+			})
+			return
+		}
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		return
 	}

@@ -6,6 +6,7 @@ import 'package:bukadulu/presentation/providers/venture_provider.dart';
 import 'package:bukadulu/domain/models/venture.dart';
 import 'package:bukadulu/presentation/widgets/common/app_shell.dart';
 import 'package:bukadulu/presentation/widgets/common/brand_icons.dart';
+import 'package:bukadulu/presentation/utils/format.dart';
 
 class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
@@ -43,14 +44,14 @@ class DashboardPage extends ConsumerWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    BrandIcons.barChart(size: 80, color: const Color(0xFFe7e5e4)),
+                    BrandIcons.barChart(size: 80, color: BrandColors.border),
                     const SizedBox(height: 24),
                     Text(
                       'Belum ada ide yang divalidasi',
                       style: Theme.of(context)
                           .textTheme
                           .titleMedium
-                          ?.copyWith(color: const Color(0xFF57534e)),
+                          ?.copyWith(color: BrandColors.body),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -89,6 +90,14 @@ class _VentureCard extends StatelessWidget {
   final Venture venture;
   const _VentureCard({required this.venture});
 
+  String _formatVentureDate(String iso) {
+    try {
+      return relativeTime(DateTime.parse(iso));
+    } catch (_) {
+      return iso.substring(0, 10);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final stageColor = StageColors.forStage(venture.stage);
@@ -124,8 +133,8 @@ class _VentureCard extends StatelessWidget {
                   ),
                   const Spacer(),
                   Text(
-                    venture.createdAt.substring(0, 10),
-                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                    _formatVentureDate(venture.createdAt),
+                    style: TextStyle(color: BrandColors.disabled, fontSize: 12),
                   ),
                 ],
               ),
@@ -141,7 +150,7 @@ class _VentureCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   venture.category!,
-                  style: const TextStyle(color: Color(0xFF57534e)),
+                  style: const TextStyle(color: BrandColors.body),
                 ),
               ],
               if (venture.score != null) ...[
@@ -149,7 +158,7 @@ class _VentureCard extends StatelessWidget {
                 Text(
                   'Skor: ${venture.score!.toStringAsFixed(0)}',
                   style: const TextStyle(
-                    color: Color(0xFF57534e),
+                    color: BrandColors.body,
                     fontSize: 12,
                   ),
                 ),

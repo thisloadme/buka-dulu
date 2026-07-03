@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bukadulu/presentation/providers/token_provider.dart';
+import 'package:bukadulu/presentation/widgets/common/brand_icons.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -56,7 +57,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1c1917),
+      backgroundColor: BrandColors.brandDark,
       body: FadeTransition(
         opacity: _fadeIn,
         child: ScaleTransition(
@@ -69,7 +70,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 width: 88,
                 height: 88,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFea580c),
+                  color: BrandColors.brandOrange,
                   borderRadius: BorderRadius.circular(22),
                 ),
                 child: ClipRRect(

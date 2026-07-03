@@ -86,17 +86,6 @@ class PlayBillingService {
     }
   }
 
-  /// Get active subscription product IDs (from past verified purchases).
-  Future<List<String>> getActiveSubscriptions() async {
-    if (!isAvailable) return [];
-
-    final purchases = await _iap.queryPastPurchases();
-    return purchases
-        .where((p) => p.status == PurchaseStatus.purchased)
-        .map((p) => p.productID)
-        .toList();
-  }
-
   void dispose() {
     stopListening();
   }

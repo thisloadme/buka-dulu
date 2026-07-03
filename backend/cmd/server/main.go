@@ -27,6 +27,7 @@ func main() {
 	migrations := []string{
 		"migrations/001_init.up.sql",
 		"migrations/002_otp_verification.up.sql",
+		"migrations/003_freemium_and_payments.up.sql",
 	}
 	for _, m := range migrations {
 		if err := config.RunMigrations(db, m); err != nil {
@@ -45,6 +46,7 @@ func main() {
 	missionRepo := repository.NewMissionRepository(db)
 	evidenceRepo := repository.NewEvidenceRepository(db)
 	scoreRepo := repository.NewScoreRepository(db)
+	orderRepo := repository.NewOrderRepository(db)
 
 	// LLM
 	llmCfg := cfg.GetLLMConfig()
@@ -62,8 +64,22 @@ func main() {
 	}
 	emailSvc := service.NewEmailService(emailCfg)
 	authSvc := service.NewAuthService(userRepo, emailSvc, cfg.JWTSecret, cfg.JWTExpiry, cfg.OTPExpiry)
+	authSvc.SetGoogleConfig(service.GoogleOAuthConfig{
+		ClientID:     cfg.GoogleClientID,
+		ClientSecret: cfg.GoogleClientSecret,
+		RedirectURL:  cfg.GoogleRedirectURL,
+	})
 	ventureSvc := service.NewVentureService(ventureRepo)
-	ideaSvc := service.NewIdeaService(ideaRepo, llmSvc, ventureSvc)
+	paymentSvc := service.NewPaymentService(orderRepo, userRepo, service.PaymentConfig{
+		KlikQris: service.KlikQrisConfig{
+			APIKey:     cfg.KlikQrisAPIKey,
+			MerchantID: cfg.KlikQrisMerchantID,
+			BaseURL:    cfg.KlikQrisBaseURL,
+		},
+		IdeaPriceIDR: cfg.IdeaPriceRupiah,
+		FreeQuota:    cfg.FreeQuota,
+	})
+	ideaSvc := service.NewIdeaService(ideaRepo, llmSvc, ventureSvc, paymentSvc)
 	customerSvc := service.NewCustomerService(customerRepo, ventureSvc)
 	menuSvc := service.NewMenuService(menuRepo, llmSvc, ventureSvc)
 	costSvc := service.NewCostService(ingredientRepo, ventureSvc)
@@ -72,7 +88,7 @@ func main() {
 	scoringSvc := service.NewScoringService(scoreRepo, ventureRepo, ideaRepo, menuRepo, ingredientRepo, missionRepo, evidenceRepo, ventureSvc)
 	mentorSvc := service.NewMentorService(ventureRepo, userRepo)
 
-	router := handler.NewRouter(authSvc, ventureSvc, ideaSvc, customerSvc, menuSvc, costSvc, missionSvc, evidenceSvc, scoringSvc, mentorSvc)
+	router := handler.NewRouter(authSvc, ventureSvc, ideaSvc, customerSvc, menuSvc, costSvc, missionSvc, evidenceSvc, scoringSvc, mentorSvc, paymentSvc, userRepo)
 
 	addr := fmt.Sprintf(":%d", cfg.Port)
 	slog.Info("server starting", "port", cfg.Port)

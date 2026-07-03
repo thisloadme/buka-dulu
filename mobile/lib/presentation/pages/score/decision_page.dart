@@ -63,15 +63,15 @@ class _DecisionPageState extends ConsumerState<DecisionPage> {
   Color get _decisionColor {
     switch (_decisionKey) {
       case 'continue':
-        return const Color(0xFF22c55e);
+        return BrandColors.success;
       case 'repeat':
-        return const Color(0xFFf59e0b);
+        return BrandColors.warning;
       case 'pivot':
-        return const Color(0xFFea580c);
+        return BrandColors.brandOrange;
       case 'stop':
-        return const Color(0xFFef4444);
+        return BrandColors.danger;
       default:
-        return const Color(0xFF57534e);
+        return BrandColors.body;
     }
   }
 
@@ -139,9 +139,9 @@ class _DecisionPageState extends ConsumerState<DecisionPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      BrandIcons.alertTriangle(size: 48, color: const Color(0xFFef4444)),
+                      BrandIcons.alertTriangle(size: 48, color: BrandColors.danger),
                       const SizedBox(height: 16),
-                      Text(_error!, style: const TextStyle(color: Color(0xFF57534e))),
+                      Text(_error!, style: const TextStyle(color: BrandColors.body)),
                       const SizedBox(height: 16),
                       OutlinedButton(
                         onPressed: _load,
@@ -177,7 +177,7 @@ class _DecisionPageState extends ConsumerState<DecisionPage> {
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontSize: 15,
-                            color: Color(0xFF57534e),
+                            color: BrandColors.body,
                             height: 1.5,
                           ),
                         ),
@@ -192,7 +192,7 @@ class _DecisionPageState extends ConsumerState<DecisionPage> {
                             'Langkah Selanjutnya',
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: const Color(0xFF292524),
+                              color: BrandColors.label,
                             ),
                           ),
                         ),
@@ -226,7 +226,7 @@ class _DecisionPageState extends ConsumerState<DecisionPage> {
                                     entry.value,
                                     style: const TextStyle(
                                       fontSize: 14,
-                                      color: Color(0xFF57534e),
+                                      color: BrandColors.body,
                                       height: 1.4,
                                     ),
                                   ),
@@ -244,12 +244,12 @@ class _DecisionPageState extends ConsumerState<DecisionPage> {
                           width: double.infinity,
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFf5f5f4),
+                            color: BrandColors.borderLight,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
                             children: [
-                              BrandIcons.trendingUp(size: 32, color: const Color(0xFFea580c)),
+                              BrandIcons.trendingUp(size: 32, color: BrandColors.brandOrange),
                               const SizedBox(width: 16),
                               Expanded(
                                 child: Column(
@@ -259,7 +259,7 @@ class _DecisionPageState extends ConsumerState<DecisionPage> {
                                       'Skor Kesiapan',
                                       style: TextStyle(
                                         fontSize: 13,
-                                        color: Color(0xFF57534e),
+                                        color: BrandColors.body,
                                       ),
                                     ),
                                     const SizedBox(height: 4),
@@ -268,7 +268,7 @@ class _DecisionPageState extends ConsumerState<DecisionPage> {
                                       style: const TextStyle(
                                         fontSize: 22,
                                         fontWeight: FontWeight.w600,
-                                        color: Color(0xFF292524),
+                                        color: BrandColors.label,
                                       ),
                                     ),
                                   ],
@@ -287,7 +287,7 @@ class _DecisionPageState extends ConsumerState<DecisionPage> {
                         child: ElevatedButton(
                           onPressed: () => context.go('/venture/${widget.ventureId}/score'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFea580c),
+                            backgroundColor: BrandColors.brandOrange,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -308,8 +308,8 @@ class _DecisionPageState extends ConsumerState<DecisionPage> {
                         child: OutlinedButton(
                           onPressed: () => context.go('/venture/new'),
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: const Color(0xFFea580c),
-                            side: const BorderSide(color: Color(0xFFea580c)),
+                            foregroundColor: BrandColors.brandOrange,
+                            side: const BorderSide(color: BrandColors.brandOrange),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -335,7 +335,7 @@ class _DecisionPageState extends ConsumerState<DecisionPage> {
                         child: const Text(
                           'Cari Mentor',
                           style: TextStyle(
-                            color: Color(0xFF292524),
+                            color: BrandColors.label,
                             decoration: TextDecoration.underline,
                           ),
                         ),

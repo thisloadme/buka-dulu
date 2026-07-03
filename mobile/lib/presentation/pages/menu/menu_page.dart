@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bukadulu/data/datasources/api.dart';
+import 'package:bukadulu/presentation/widgets/common/brand_icons.dart';
 
 class MenuPage extends ConsumerStatefulWidget {
   final String ventureId;
@@ -129,7 +130,7 @@ class _MenuPageState extends ConsumerState<MenuPage> {
                             return Card(
                               margin: const EdgeInsets.only(bottom: 8),
                               child: ListTile(
-                                leading: isHero ? const Icon(Icons.star, color: Color(0xFFf59e0b)) : null,
+                                leading: isHero ? const Icon(Icons.star, color: BrandColors.brandAmber) : null,
                                 title: Text(m['name'] ?? ''),
                                 subtitle: Text('${m['status']} ${isHero ? '⭐ Hero' : ''}'),
                                 trailing: Row(
@@ -137,16 +138,16 @@ class _MenuPageState extends ConsumerState<MenuPage> {
                                   children: [
                                     if (!isActive && activeCount < 3)
                                       IconButton(
-                                        icon: const Icon(Icons.check_circle_outline, color: Color(0xFF22c55e)),
+                                        icon: const Icon(Icons.check_circle_outline, color: BrandColors.success),
                                         onPressed: () => _toggleActive(m['id'], true),
                                       ),
                                     if (isActive)
                                       IconButton(
-                                        icon: const Icon(Icons.undo, color: Color(0xFFea580c)),
+                                        icon: const Icon(Icons.undo, color: BrandColors.brandOrange),
                                         onPressed: () => _toggleActive(m['id'], false),
                                       ),
                                     IconButton(
-                                      icon: const Icon(Icons.delete_outline, color: Color(0xFFef4444)),
+                                      icon: const Icon(Icons.delete_outline, color: BrandColors.danger),
                                       onPressed: () => _delete(m['id']),
                                     ),
                                   ],

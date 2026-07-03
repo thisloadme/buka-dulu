@@ -24,13 +24,27 @@ type Config struct {
 		StorageType string
 		StoragePath string
 
-		SMTPHost     string
-		SMTPPort     int
-		SMTPUser     string
-		SMTPPassword string
-		SMTPFrom     string
-		OTPExpiry    int // minutes
-	}
+	SMTPHost     string
+	SMTPPort     int
+	SMTPUser     string
+	SMTPPassword string
+	SMTPFrom     string
+	OTPExpiry    int // minutes
+
+	// Google OAuth (SSO)
+	GoogleClientID     string
+	GoogleClientSecret string
+	GoogleRedirectURL  string
+
+	// KlikQris payments
+	KlikQrisAPIKey     string
+	KlikQrisMerchantID string
+	KlikQrisBaseURL    string
+
+	// Freemium
+	IdeaPriceRupiah int
+	FreeQuota       int
+}
 
 func Load() *Config {
 	loadDotEnv()
@@ -55,6 +69,17 @@ func Load() *Config {
 		SMTPPassword: getEnv("SMTP_PASSWORD", ""),
 		SMTPFrom:     getEnv("SMTP_FROM", "noreply@bukadulu.id"),
 		OTPExpiry:    getEnvInt("OTP_EXPIRY_MINUTES", 10),
+
+		GoogleClientID:     getEnv("GOOGLE_OAUTH_CLIENT_ID", ""),
+		GoogleClientSecret: getEnv("GOOGLE_OAUTH_CLIENT_SECRET", ""),
+		GoogleRedirectURL:  getEnv("GOOGLE_OAUTH_REDIRECT_URL", ""),
+
+		KlikQrisAPIKey:     getEnv("KLIKQRIS_API_KEY", ""),
+		KlikQrisMerchantID: getEnv("KLIKQRIS_MERCHANT_ID", ""),
+		KlikQrisBaseURL:    getEnv("KLIKQRIS_BASE_URL", "https://klikqris.com/api"),
+
+		IdeaPriceRupiah: getEnvInt("IDEA_PRICE_RUPIAH", 10000),
+		FreeQuota:       getEnvInt("FREE_QUOTA", 1),
 	}
 
 	if cfg.DatabaseURL == "" {

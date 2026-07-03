@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bukadulu/presentation/providers/auth_provider.dart';
+import 'package:bukadulu/presentation/widgets/common/brand_icons.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -57,7 +58,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Text('Validasi ide F&B-mu dalam 14 hari', style: theme.textTheme.bodyLarge?.copyWith(color: const Color(0xFF57534e), fontWeight: FontWeight.w300)),
+                  Text('Validasi ide F&B-mu dalam 14 hari', style: theme.textTheme.bodyLarge?.copyWith(color: BrandColors.body, fontWeight: FontWeight.w300)),
                   const SizedBox(height: 48),
                   TextFormField(
                     controller: _emailController,
@@ -92,7 +93,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   if (authState.hasError)
                     Padding(
                       padding: const EdgeInsets.only(top: 16),
-                      child: Text('${authState.error}', style: const TextStyle(color: Color(0xFFdc2626))),
+                      child: Text('${authState.error}', style: const TextStyle(color: BrandColors.danger)),
                     ),
                   const SizedBox(height: 24),
                   TextButton(

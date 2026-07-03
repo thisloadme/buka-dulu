@@ -18,6 +18,7 @@ type AuthService struct {
 	jwtSecret   string
 	jwtExpiry   int
 	otpExpiry   int // minutes
+	googleCfg   GoogleOAuthConfig
 }
 
 func NewAuthService(userRepo *repository.UserRepository, emailSvc *EmailService, jwtSecret string, jwtExpiry int, otpExpiry int) *AuthService {

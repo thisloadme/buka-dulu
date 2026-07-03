@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:bukadulu/domain/models/subscription_plan.dart';
 import 'package:bukadulu/presentation/providers/payment_provider.dart';
+import 'package:bukadulu/presentation/widgets/common/brand_icons.dart';
 
 class SubscriptionPage extends ConsumerStatefulWidget {
   const SubscriptionPage({super.key});
@@ -101,7 +102,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
             const SizedBox(height: 8),
             Text(
               'Akses fitur lengkap untuk validasi bisnis F&B kamu',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: const Color(0xFF57534e)),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: BrandColors.body),
             ),
             const SizedBox(height: 24),
 
@@ -111,20 +112,20 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                 padding: const EdgeInsets.all(12),
                 margin: const EdgeInsets.only(bottom: 16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFfef3c7),
+                  color: const Color(0xFFfef3c7), // amber-100
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFFf59e0b)),
+                  border: Border.all(color: BrandColors.brandAmber),
                 ),
                 child: const Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.build, color: Color(0xFF92400e), size: 20),
+                    Icon(Icons.build, color: Color(0xFF92400e), size: 20), // amber-800
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'Mode Development — Google Play Billing dinonaktifkan. '
                         'Hanya aktif di release build dengan aplikasi terdaftar di Google Play Console.',
-                        style: TextStyle(color: Color(0xFF92400e), fontSize: 13),
+                        style: TextStyle(color: Color(0xFF92400e), fontSize: 13), // amber-800
                       ),
                     ),
                   ],
@@ -167,10 +168,10 @@ class _PlanCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: plan.isPopular ? const Color(0xFFfff7ed) : Colors.white,
+        color: plan.isPopular ? BrandColors.brandCream : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: plan.isPopular ? const Color(0xFFea580c) : const Color(0xFFe7e5e4),
+          color: plan.isPopular ? BrandColors.brandOrange : BrandColors.border,
           width: plan.isPopular ? 2 : 1,
         ),
       ),
@@ -183,7 +184,7 @@ class _PlanCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFea580c),
+                  color: BrandColors.brandOrange,
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: const Text(
@@ -200,7 +201,7 @@ class _PlanCard extends StatelessWidget {
                 Text(plan.name, style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 4),
                 Text(plan.description,
-                    style: const TextStyle(color: Color(0xFF57534e), fontSize: 13)),
+                    style: const TextStyle(color: BrandColors.body, fontSize: 13)),
                 const SizedBox(height: 12),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -209,13 +210,13 @@ class _PlanCard extends StatelessWidget {
                       priceFromPlay ?? (isFree ? 'Gratis' : plan.priceFormatted),
                       style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                             fontWeight: FontWeight.w300,
-                            color: const Color(0xFFea580c),
+                            color: BrandColors.brandOrange,
                           ),
                     ),
                     if (!isFree)
                       const Padding(
                         padding: EdgeInsets.only(bottom: 6, left: 4),
-                        child: Text('/bulan', style: TextStyle(color: Color(0xFFa8a29e), fontSize: 13)),
+                        child: Text('/bulan', style: TextStyle(color: BrandColors.disabled, fontSize: 13)),
                       ),
                   ],
                 ),
@@ -224,7 +225,7 @@ class _PlanCard extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 6),
                       child: Row(
                         children: [
-                          const Icon(Icons.check, size: 16, color: Color(0xFF22c55e)),
+                          const Icon(Icons.check, size: 16, color: BrandColors.success),
                           const SizedBox(width: 8),
                           Text(f, style: const TextStyle(fontSize: 14)),
                         ],
@@ -237,7 +238,7 @@ class _PlanCard extends StatelessWidget {
                     onPressed: onSubscribe,
                     style: plan.isPopular
                         ? ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFea580c),
+                            backgroundColor: BrandColors.brandOrange,
                             foregroundColor: Colors.white,
                           )
                         : null,

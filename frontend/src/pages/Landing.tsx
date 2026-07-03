@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import LottiePlayer from '../components/LottiePlayer'
 
 const NAV_ITEMS = ['Cara Kerja', 'Fitur', 'Harga', 'FAQ'] as const
 
@@ -84,6 +85,20 @@ function FeatureCard({ tag, icon, title, desc, delay }: { tag: string; icon: Rea
 
 type FaqItem = { q: string; a: string }
 
+/**
+ * Render FAQ answer with <strong> tags safely.
+ * Replaces dangerouslySetInnerHTML to avoid XSS.
+ * Splits on <strong>...</strong> pairs and renders them as <strong> React elements.
+ */
+function renderAnswer(a: string) {
+  const parts = a.split(/(<strong>.*?<\/strong>)/g)
+  return parts.map((part, i) => {
+    const match = part.match(/^<strong>(.*?)<\/strong>$/)
+    if (match) return <strong key={i}>{match[1]}</strong>
+    return <span key={i}>{part}</span>
+  })
+}
+
 function FaqSection({ items }: { items: FaqItem[] }) {
   const [openIdx, setOpenIdx] = useState<number | null>(null)
   return (
@@ -99,8 +114,9 @@ function FaqSection({ items }: { items: FaqItem[] }) {
               >
                 {item.q}
               </button>
-              <div className={`faq-answer${openIdx === i ? ' open' : ''}`}
-                dangerouslySetInnerHTML={{ __html: item.a }} />
+              <div className={`faq-answer${openIdx === i ? ' open' : ''}`}>
+                {renderAnswer(item.a)}
+              </div>
             </div>
           ))}
         </div>
@@ -162,21 +178,22 @@ export default function Landing() {
             <div className="hero-stats fade-in delay-4">
               <div className="stat-item">
                 <div className="stat-number">14 hari</div>
-                <div className="stat-label">Dari ide ke bukti pasar</div>
+                <div className="stat-label">Garansi sampai putusan: lanjut atau stop</div>
               </div>
               <div className="stat-item">
                 <div className="stat-number">1-3 SKU</div>
-                <div className="stat-label">Fokus, bukan banyak menu</div>
+                <div className="stat-label">Fokus hero, bukan banyak menu</div>
               </div>
               <div className="stat-item">
                 <div className="stat-number">100%</div>
-                <div className="stat-label">Berdasarkan bukti nyata</div>
+                <div className="stat-label">Skor dari bukti, bukan opini</div>
               </div>
             </div>
           </div>
           <div className="screenshot-area fade-in delay-5">
             <div className="screenshot-card">
               <div className="micro" style={{ color: 'var(--brand-orange)', marginBottom: 16 }}>Preview Aplikasi</div>
+              <LottiePlayer src="/lottie/Launch-your-start-ups.json" style={{ width: 200, margin: '0 auto 16px' }} loop />
               <div className="app-preview">
                 <div className="preview-step">
                   <div className="step-label">Langkah 1</div>
@@ -268,20 +285,47 @@ export default function Landing() {
         <div className="container">
           <div className="micro" style={{ color: 'var(--brand-orange)', marginBottom: 12 }}>Testimoni</div>
           <h2 className="display-large" style={{ maxWidth: 500, margin: '0 auto' }}>Apa kata mereka yang sudah mencoba?</h2>
-          <div className="proof-quote fade-in">
-            <blockquote>
-              "Awalnya saya pikir ide jualan puding cup saya sudah oke. Ternyata setelah dihitung margin,
-              harga jual saya terlalu rendah. BukaDulu tidak hanya memberi tahu, tapi juga memberi misi untuk
-              tes harga langsung ke calon pembeli. Hasilnya? Saya berani pivot ke produk yang lebih
-              menguntungkan."
-            </blockquote>
-            <footer>
-              <div className="proof-avatar">SA</div>
-              <div>
-                <div className="proof-author">Sari Anindya</div>
-                <div className="proof-role">Founder — Sari's Kitchen</div>
-              </div>
-            </footer>
+          <div className="proof-grid">
+            <div className="proof-quote fade-in">
+              <blockquote>
+                "Awalnya saya pikir ide jualan puding cup saya sudah oke. Ternyata setelah dihitung margin,
+                harga jual saya terlalu rendah. <strong>Hasil: margin naik 40% setelah pivot</strong> ke menu yang lebih
+                menguntungkan."
+              </blockquote>
+              <footer>
+                <div className="proof-avatar">SA</div>
+                <div>
+                  <div className="proof-author">Sari Anindya</div>
+                  <div className="proof-role">Founder — Sari's Kitchen</div>
+                </div>
+              </footer>
+            </div>
+            <div className="proof-quote fade-in delay-1">
+              <blockquote>
+                "Saya tipe yang gampang overthinking. Setelah 5 hari ikut misi polling, <strong>dapat 12 calon
+                pembeli real</strong> yang bilang mereka mau order. Itu yang bikin saya yakin lanjut produksi."
+              </blockquote>
+              <footer>
+                <div className="proof-avatar">RF</div>
+                <div>
+                  <div className="proof-author">Rizky Firmansyah</div>
+                  <div className="proof-role">Side Hustler — Ayam Geprek Pak RT</div>
+                </div>
+              </footer>
+            </div>
+            <div className="proof-quote fade-in delay-2">
+              <blockquote>
+                "Sistemnya tegas: 'Stop, ide ini tidak layak'. Awalnya kesel, tapi setelah dipikir itu
+                justru <strong>menghemat modal 20 juta</strong> yang akan saya bakar untuk buka gerai."
+              </blockquote>
+              <footer>
+                <div className="proof-avatar">DW</div>
+                <div>
+                  <div className="proof-author">Dewi Wulandari</div>
+                  <div className="proof-role">Aspiring Founder — Es Cincau Premium</div>
+                </div>
+              </footer>
+            </div>
           </div>
         </div>
       </section>
@@ -323,7 +367,8 @@ export default function Landing() {
             </div>
           </div>
           <p className="caption" style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', marginTop: 24 }}>
-            Sudah punya akun? <Link to="/login" style={{ color: 'var(--brand-amber)' }}>Masuk di sini</Link>
+            Atau coba Free dulu, bayar nanti. Sudah punya akun?{' '}
+            <Link to="/login" style={{ color: 'var(--brand-amber)' }}>Masuk di sini</Link>
           </p>
         </div>
       </section>

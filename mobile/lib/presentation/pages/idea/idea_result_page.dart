@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bukadulu/data/datasources/api.dart';
 import 'package:bukadulu/presentation/providers/idea_provider.dart';
+import 'package:bukadulu/presentation/widgets/common/brand_icons.dart';
 
 class IdeaResultPage extends ConsumerStatefulWidget {
   final String ventureId;
@@ -174,7 +175,7 @@ class _ConceptCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: TextStyle(color: Color(0xFF57534e), fontSize: 12, fontWeight: FontWeight.w600)),
+            Text(title, style: TextStyle(color: BrandColors.body, fontSize: 12, fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
             Text(content, style: Theme.of(context).textTheme.bodyMedium),
           ],

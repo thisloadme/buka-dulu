@@ -42,10 +42,11 @@ func (r *UserRepository) Create(user *domain.User) error {
 	return err
 }
 
-// userColumns returns the SELECT column list including OTP fields
+// userColumns returns the SELECT column list including OTP + provider + quota fields
 func userColumns() string {
 	return `id, role, full_name, email, phone, password_hash, status,
-		otp_code, otp_expires_at, otp_verified_at, last_login_at, created_at, updated_at`
+		otp_code, otp_expires_at, otp_verified_at, last_login_at,
+		provider, provider_uid, free_quota_used, created_at, updated_at`
 }
 
 // scanUser scans a user row into a User struct, handling NULL fields
@@ -53,10 +54,11 @@ func scanUser(scanner interface {
 	Scan(dest ...interface{}) error
 }) (*domain.User, error) {
 	u := &domain.User{}
-	var email, phone, otpCode, otpExp, otpVerified, lastLogin sql.NullString
+	var email, phone, otpCode, otpExp, otpVerified, lastLogin, providerUID sql.NullString
 	err := scanner.Scan(
 		&u.ID, &u.Role, &u.FullName, &email, &phone, &u.PasswordHash, &u.Status,
-		&otpCode, &otpExp, &otpVerified, &lastLogin, &u.CreatedAt, &u.UpdatedAt,
+		&otpCode, &otpExp, &otpVerified, &lastLogin,
+		&u.Provider, &providerUID, &u.FreeQuotaUsed, &u.CreatedAt, &u.UpdatedAt,
 	)
 	if err != nil {
 		return nil, err
@@ -75,23 +77,10 @@ func scanUser(scanner interface {
 	if lastLogin.Valid {
 		u.LastLoginAt = &lastLogin.String
 	}
-	return u, nil
-}
-
-func scanUserBrief(scanner interface {
-	Scan(dest ...interface{}) error
-}) (*domain.User, error) {
-	u := &domain.User{}
-	var email, phone, lastLogin sql.NullString
-	err := scanner.Scan(&u.ID, &u.Role, &u.FullName, &email, &phone, &u.PasswordHash, &u.Status, &lastLogin, &u.CreatedAt, &u.UpdatedAt)
-	if err != nil {
-		return nil, err
+	if u.Provider == "" {
+		u.Provider = "email"
 	}
-	u.Email = email.String
-	u.Phone = phone.String
-	if lastLogin.Valid {
-		u.LastLoginAt = &lastLogin.String
-	}
+	u.ProviderUID = providerUID.String
 	return u, nil
 }
 
@@ -146,6 +135,67 @@ func (r *UserRepository) UpdateOTP(id string, otpCode, otpExpiresAt string) erro
 	_, err := r.db.Exec(
 		`UPDATE users SET otp_code = $1, otp_expires_at = $2, updated_at = $2 WHERE id = $3`,
 		otpCode, otpExpiresAt, id,
+	)
+	return err
+}
+
+// FindByProvider finds a user by SSO provider + provider uid (e.g. google sub).
+func (r *UserRepository) FindByProvider(provider, providerUID string) (*domain.User, error) {
+	row := r.db.QueryRow(
+		`SELECT `+userColumns()+` FROM users WHERE provider = $1 AND provider_uid = $2`,
+		provider, providerUID,
+	)
+	u, err := scanUser(row)
+	if err == sql.ErrNoRows {
+		return nil, domain.ErrNotFound
+	}
+	return u, err
+}
+
+// CreateSSO creates a user from an SSO provider (no password, already active).
+func (r *UserRepository) CreateSSO(user *domain.User) error {
+	_, err := r.db.Exec(
+		`INSERT INTO users (id, role, full_name, email, phone, password_hash, status,
+		 provider, provider_uid, created_at, updated_at)
+		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+		user.ID, string(user.Role), user.FullName, user.Email, nil, "", user.Status,
+		user.Provider, user.ProviderUID, user.CreatedAt, user.UpdatedAt,
+	)
+	return err
+}
+
+// IncrementFreeQuota atomically increments the free quota counter.
+func (r *UserRepository) IncrementFreeQuota(userID string) error {
+	_, err := r.db.Exec(
+		`UPDATE users SET free_quota_used = free_quota_used + 1, updated_at = CURRENT_TIMESTAMP WHERE id = $1`,
+		userID,
+	)
+	return err
+}
+
+// GetFreeQuotaUsed returns how many free idea validations the user has consumed.
+func (r *UserRepository) GetFreeQuotaUsed(userID string) (int, error) {
+	var used int
+	err := r.db.QueryRow(`SELECT free_quota_used FROM users WHERE id = $1`, userID).Scan(&used)
+	if err == sql.ErrNoRows {
+		return 0, domain.ErrNotFound
+	}
+	return used, err
+}
+
+// UpdateProvider links a SSO provider to an existing user.
+func (r *UserRepository) UpdateProvider(id, provider, providerUID string) error {
+	_, err := r.db.Exec(
+		`UPDATE users SET provider = $1, provider_uid = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3`,
+		provider, providerUID, id,
+	)
+	return err
+}
+
+// Activate sets user status to active (used when completing SSO / verification).
+func (r *UserRepository) Activate(id string) error {
+	_, err := r.db.Exec(
+		`UPDATE users SET status = 'active', updated_at = CURRENT_TIMESTAMP WHERE id = $1`, id,
 	)
 	return err
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bukadulu/presentation/providers/auth_provider.dart';
+import 'package:bukadulu/presentation/widgets/common/brand_icons.dart';
 
 class OTPVerifyPage extends ConsumerStatefulWidget {
   final String email;
@@ -95,7 +96,7 @@ class _OTPVerifyPageState extends ConsumerState<OTPVerifyPage> {
                 Text(
                   'Kami telah mengirim kode OTP ke\n${widget.email}',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: const Color(0xFF57534e)),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: BrandColors.body),
                 ),
                 const SizedBox(height: 32),
                 TextField(
@@ -107,7 +108,7 @@ class _OTPVerifyPageState extends ConsumerState<OTPVerifyPage> {
                   decoration: const InputDecoration(
                     counterText: '',
                     hintText: '------',
-                    hintStyle: TextStyle(color: Color(0xFFd6d3d1), fontSize: 32, letterSpacing: 12),
+                    hintStyle: TextStyle(color: const Color(0xFFd6d3d1), fontSize: 32, letterSpacing: 12),
                     border: OutlineInputBorder(),
                   ),
                   onChanged: (_) {
@@ -130,7 +131,7 @@ class _OTPVerifyPageState extends ConsumerState<OTPVerifyPage> {
                     padding: const EdgeInsets.only(top: 16),
                     child: Text(
                       '${authState.error}',
-                      style: const TextStyle(color: Color(0xFFdc2626)),
+                      style: const TextStyle(color: BrandColors.danger),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -140,7 +141,7 @@ class _OTPVerifyPageState extends ConsumerState<OTPVerifyPage> {
                 else
                   Text(
                     'Kirim ulang dalam $_countdown detik',
-                    style: const TextStyle(color: Color(0xFFa8a29e)),
+                    style: const TextStyle(color: BrandColors.disabled),
                   ),
               ],
             ),

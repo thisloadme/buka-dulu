@@ -20,6 +20,9 @@ type User struct {
 	OTPExpiresAt  *string  `db:"otp_expires_at" json:"-"`
 	OTPVerifiedAt *string  `db:"otp_verified_at" json:"otp_verified_at,omitempty"`
 	LastLoginAt   *string  `db:"last_login_at" json:"last_login_at,omitempty"`
+	Provider      string   `db:"provider" json:"provider"`
+	ProviderUID   string   `db:"provider_uid" json:"-"`
+	FreeQuotaUsed int      `db:"free_quota_used" json:"free_quota_used"`
 	CreatedAt     string   `db:"created_at" json:"created_at"`
 	UpdatedAt     string   `db:"updated_at" json:"updated_at"`
 }

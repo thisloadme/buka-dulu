@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -57,23 +58,65 @@ class _ScorePageState extends ConsumerState<ScorePage> {
               padding: const EdgeInsets.all(24),
               child: Column(children: [
                 if (_score != null) ...[
-                  // Big score circle
-                  Container(
-                    width: 160, height: 160,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color(0xFFea580c).withValues(alpha: 0.1),
-                      border: Border.all(color: Color(0xFFea580c), width: 4),
+                  // Big score circle with animated counter
+                  TweenAnimationBuilder<double>(
+                    tween: Tween<double>(
+                      begin: 0,
+                      end: (_score!['total_score'] as num).toDouble(),
                     ),
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
+                    duration: const Duration(milliseconds: 1200),
+                    curve: Curves.easeOutCubic,
+                    builder: (context, animatedScore, _) {
+                      final intScore = animatedScore.toInt();
+                      final showCelebration = intScore >= 80;
+                      return Stack(
+                        alignment: Alignment.center,
                         children: [
-                          Text('${(_score!['total_score'] as num).toInt()}', style: TextStyle(fontSize: 48, fontWeight: FontWeight.w600, color: Color(0xFFea580c))),
-                          Text('/100', style: TextStyle(color: Color(0xFF57534e))),
+                          // Celebration dots when score >= 80
+                          if (showCelebration) ...List.generate(8, (i) {
+                            final angle = (i * 3.14159 * 2) / 8;
+                            return TweenAnimationBuilder<double>(
+                              tween: Tween<double>(begin: 0, end: 1),
+                              duration: Duration(milliseconds: 600 + (i * 60)),
+                              curve: Curves.easeOutBack,
+                              builder: (_, t, __) {
+                                final radius = 100.0 * t;
+                                return Positioned(
+                                  left: 80 + radius * math.cos(angle) - 4,
+                                  top: 80 + radius * math.sin(angle) - 4,
+                                  child: Container(
+                                    width: 8,
+                                    height: 8,
+                                    decoration: BoxDecoration(
+                                      color: BrandColors.brandOrange
+                                          .withValues(alpha: 1 - t * 0.3),
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          }),
+                          Container(
+                            width: 160, height: 160,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: BrandColors.brandOrange.withValues(alpha: 0.1),
+                              border: Border.all(color: BrandColors.brandOrange, width: 4),
+                            ),
+                            child: Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text('$intScore', style: TextStyle(fontSize: 48, fontWeight: FontWeight.w600, color: BrandColors.brandOrange)),
+                                  Text('/100', style: TextStyle(color: BrandColors.body)),
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
-                      ),
-                    ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 32),
 
@@ -120,7 +163,7 @@ class _ScorePageState extends ConsumerState<ScorePage> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      Text(_decision!['rationale'] ?? '', textAlign: TextAlign.center, style: TextStyle(color: Color(0xFF57534e))),
+                          Text(_decision!['rationale'] ?? '', textAlign: TextAlign.center, style: TextStyle(color: BrandColors.body)),
                       const SizedBox(height: 16),
                       OutlinedButton(
                         onPressed: () => context.go('/venture/${widget.ventureId}/decision'),
@@ -145,17 +188,32 @@ class _ScorePageState extends ConsumerState<ScorePage> {
       padding: const EdgeInsets.only(bottom: 12),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text(label, style: TextStyle(color: Color(0xFF57534e), fontSize: 13)),
-          Text('${score.toInt()}', style: const TextStyle(fontWeight: FontWeight.w600)),
+          Text(label, style: TextStyle(color: BrandColors.body, fontSize: 13)),
+          // Animated score number (count up to value)
+          TweenAnimationBuilder<double>(
+            tween: Tween<double>(begin: 0, end: score),
+            duration: const Duration(milliseconds: 1000),
+            curve: Curves.easeOutCubic,
+            builder: (_, v, __) => Text(
+              '${v.toInt()}',
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
         ]),
         const SizedBox(height: 4),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(4),
-          child: LinearProgressIndicator(
-            value: score / 100,
-            backgroundColor: Colors.grey[200],
-            color: Color(0xFFea580c),
-            minHeight: 8,
+        // Animated progress bar
+        TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: 0, end: score / 100),
+          duration: const Duration(milliseconds: 1000),
+          curve: Curves.easeOutCubic,
+          builder: (_, v, __) => ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: v,
+              backgroundColor: BrandColors.borderLight,
+              color: BrandColors.brandOrange,
+              minHeight: 8,
+            ),
           ),
         ),
       ]),
@@ -179,11 +237,11 @@ class _ScorePageState extends ConsumerState<ScorePage> {
 
   Color _decisionColor(String d) {
     switch (d) {
-      case 'continue': return Colors.green;
-      case 'repeat': return Colors.orange;
-      case 'pivot': return Colors.amber;
-      case 'stop': return Colors.red;
-      default: return Colors.grey;
+      case 'continue': return BrandColors.success;
+      case 'repeat': return BrandColors.warning;
+      case 'pivot': return BrandColors.brandAmber;
+      case 'stop': return BrandColors.danger;
+      default: return BrandColors.disabled;
     }
   }
 }

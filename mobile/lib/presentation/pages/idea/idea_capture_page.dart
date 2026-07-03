@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bukadulu/data/datasources/api.dart';
+import 'package:bukadulu/presentation/widgets/common/brand_icons.dart';
 class IdeaCapturePage extends ConsumerStatefulWidget {
   final String ventureId;
   const IdeaCapturePage({super.key, required this.ventureId});
@@ -12,6 +13,15 @@ class IdeaCapturePage extends ConsumerStatefulWidget {
 class _IdeaCapturePageState extends ConsumerState<IdeaCapturePage> {
   final _controller = TextEditingController();
   bool _loading = false;
+
+  /// Visual state for live char counter (red <20, amber <50, green ≥50).
+  Color _counterColorValue(int len) {
+    if (len < 20) return BrandColors.danger;
+    if (len < 50) return BrandColors.warning;
+    return BrandColors.success;
+  }
+
+  @override
 
   @override
   void dispose() {
@@ -57,12 +67,13 @@ class _IdeaCapturePageState extends ConsumerState<IdeaCapturePage> {
             const SizedBox(height: 8),
             Text(
               'Sebutkan produk, target pelanggan, harga, dan lokasi. Semakin detail semakin baik.',
-              style: TextStyle(color: Color(0xFF57534e)),
+              style: TextStyle(color: BrandColors.body),
             ),
             const SizedBox(height: 24),
             TextFormField(
               controller: _controller,
               maxLines: 8,
+              onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
                 hintText: 'Contoh: Saya ingin jual nasi goreng homemade dengan topping ayam geprek...',
                 alignLabelWithHint: true,
@@ -70,7 +81,20 @@ class _IdeaCapturePageState extends ConsumerState<IdeaCapturePage> {
               ),
             ),
             const SizedBox(height: 8),
-            Text('Minimal 20 karakter', style: TextStyle(fontSize: 12, color: Color(0xFF57534e))),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Minimal 20 karakter', style: TextStyle(fontSize: 12, color: BrandColors.body)),
+                Text(
+                  '${_controller.text.length} / 20 karakter',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: _counterColorValue(_controller.text.length),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,

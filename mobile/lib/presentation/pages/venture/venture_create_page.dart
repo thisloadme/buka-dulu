@@ -3,6 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bukadulu/data/datasources/api.dart';
 
+const _kCategories = <String>[
+  'makanan_berat',
+  'minuman',
+  'snack',
+  'frozen_food',
+  'catering',
+  'kue_dan_roti',
+];
+
 class VentureCreatePage extends ConsumerStatefulWidget {
   const VentureCreatePage({super.key});
   @override
@@ -12,14 +21,13 @@ class VentureCreatePage extends ConsumerStatefulWidget {
 class _VentureCreatePageState extends ConsumerState<VentureCreatePage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _categoryController = TextEditingController();
   final _regionController = TextEditingController();
+  String? _selectedCategory;
   bool _loading = false;
 
   @override
   void dispose() {
     _nameController.dispose();
-    _categoryController.dispose();
     _regionController.dispose();
     super.dispose();
   }
@@ -31,7 +39,7 @@ class _VentureCreatePageState extends ConsumerState<VentureCreatePage> {
       final api = ref.read(authApiProvider);
       final data = await api.createVenture(
         name: _nameController.text.trim(),
-        category: _categoryController.text.trim(),
+        category: _selectedCategory ?? '',
         region: _regionController.text.trim(),
       );
       if (mounted) context.go('/venture/${data['id']}/idea');
@@ -63,9 +71,16 @@ class _VentureCreatePageState extends ConsumerState<VentureCreatePage> {
                 validator: (v) => v == null || v.trim().isEmpty ? 'Wajib diisi' : null,
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                controller: _categoryController,
-                decoration: const InputDecoration(labelText: 'Kategori', hintText: 'makanan_berat, minuman, snack, dll'),
+              DropdownButtonFormField<String>(
+                value: _selectedCategory,
+                items: _kCategories
+                    .map((c) => DropdownMenuItem<String>(
+                          value: c,
+                          child: Text(c.replaceAll('_', ' ')),
+                        ))
+                    .toList(),
+                onChanged: (v) => setState(() => _selectedCategory = v),
+                decoration: const InputDecoration(labelText: 'Kategori'),
               ),
               const SizedBox(height: 16),
               TextFormField(

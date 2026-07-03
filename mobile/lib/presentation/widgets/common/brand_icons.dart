@@ -7,14 +7,25 @@ class BrandColors {
   const BrandColors._();
 
   static const Color brandOrange = Color(0xFFea580c);
+  static const Color brandOrangeHover = Color(0xFFc2410c);
   static const Color brandAmber = Color(0xFFf59e0b);
   static const Color brandCream = Color(0xFFfff7ed);
   static const Color brandDark = Color(0xFF1c1917);
+
+  // Text & surface tokens
+  static const Color heading = Color(0xFF1c1917);
   static const Color body = Color(0xFF57534e);
   static const Color label = Color(0xFF292524);
   static const Color border = Color(0xFFe7e5e4);
   static const Color borderLight = Color(0xFFf5f5f4);
   static const Color bgWarm = Color(0xFFfafaf9);
+
+  // Status tokens (semantic — used for valid/warning/invalid UI states)
+  static const Color success = Color(0xFF22c55e);
+  static const Color warning = Color(0xFFf59e0b);
+  static const Color danger = Color(0xFFef4444);
+  static const Color disabled = Color(0xFFa8a29e);
+  static const Color info = Color(0xFF3b82f6); // blue, for "in progress" / accepted states
 }
 
 /// Convenience semantic palette for icon status colours.

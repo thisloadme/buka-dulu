@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bukadulu/presentation/widgets/common/brand_icons.dart';
 
 // =============================================================================
 // StageColors — static color mapping from DESIGN.md
@@ -332,9 +333,13 @@ class AppShell extends StatelessWidget {
 
     return AppBar(
       leading: showBack
-          ? IconButton(
-              icon: const Icon(Icons.arrow_back_ios_rounded, size: 20),
-              onPressed: () => Navigator.of(context).maybePop(),
+          ? Semantics(
+              label: 'Kembali',
+              button: true,
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_rounded, size: 20),
+                onPressed: () => Navigator.of(context).maybePop(),
+              ),
             )
           : null,
       title: title != null
@@ -380,13 +385,17 @@ class AppShell extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: SizedBox(
           width: double.infinity,
-          child: ElevatedButton(
-            onPressed: bottomDisabled ? null : onBottomCta,
+          child: Semantics(
+            label: bottomDisabled ? '$bottomCta (tidak tersedia)' : bottomCta!,
+            button: true,
+            enabled: !bottomDisabled,
+            child: ElevatedButton(
+              onPressed: bottomDisabled ? null : onBottomCta,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFea580c),
+              backgroundColor: BrandColors.brandOrange,
               foregroundColor: Colors.white,
-              disabledBackgroundColor: const Color(0xFFe7e5e4),
-              disabledForegroundColor: const Color(0xFFa8a29e),
+              disabledBackgroundColor: BrandColors.border,
+              disabledForegroundColor: BrandColors.disabled,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(6),
@@ -398,6 +407,7 @@ class AppShell extends StatelessWidget {
               ),
             ),
             child: Text(bottomCta!),
+            ),
           ),
         ),
       ),

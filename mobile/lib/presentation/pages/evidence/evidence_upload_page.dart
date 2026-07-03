@@ -95,20 +95,20 @@ class _EvidenceUploadPageState extends ConsumerState<EvidenceUploadPage> {
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
               ),
-            if (_type == 'image')
+              if (_type == 'image')
               Container(
                 height: 120,
                 decoration: BoxDecoration(
-                  border: Border.all(color: Color(0xFFe7e5e4)),
+                  border: Border.all(color: BrandColors.border),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      BrandIcons.camera(size: 40, color: Color(0xFFa8a29e)),
+                      BrandIcons.camera(size: 40, color: BrandColors.disabled),
                       const SizedBox(height: 8),
-                      const Text('Ambil foto dari galeri atau kamera', style: TextStyle(color: Color(0xFF57534e))),
+                      const Text('Ambil foto dari galeri atau kamera', style: TextStyle(color: BrandColors.body)),
                     ],
                   ),
                 ),
@@ -134,7 +134,7 @@ class _EvidenceUploadPageState extends ConsumerState<EvidenceUploadPage> {
                         ? BrandIcons.alertTriangle(color: _verdictColor(_review!['verdict']))
                         : BrandIcons.xCircle(color: _verdictColor(_review!['verdict'])),
                 const SizedBox(width: 8),
-                const Text('Verdict: ', style: TextStyle(color: Color(0xFF57534e))),
+                const Text('Verdict: ', style: TextStyle(color: BrandColors.body)),
                 Text(_review!['verdict'] ?? '', style: TextStyle(
                   fontWeight: FontWeight.w600,
                   color: _verdictColor(_review!['verdict']),

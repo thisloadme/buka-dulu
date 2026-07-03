@@ -44,13 +44,13 @@ class _MissionBoardPageState extends ConsumerState<MissionBoardPage> {
 
   Color _priorityColor(String p) {
     switch (p) {
-      case 'high': return Colors.red;
-      case 'medium': return Colors.orange;
-      default: return Colors.grey;
+      case 'high': return BrandColors.danger;
+      case 'medium': return BrandColors.warning;
+      default: return BrandColors.disabled;
     }
   }
 
-  Widget _typeIcon(String t, {Color color = Colors.grey, double size = 20}) {
+  Widget _typeIcon(String t, {Color color = BrandColors.disabled, double size = 20}) {
     switch (t) {
       case 'polling': return BrandIcons.barChart(color: color, size: size);
       case 'interview': return BrandIcons.chatBubble(color: color, size: size);
@@ -80,12 +80,12 @@ class _MissionBoardPageState extends ConsumerState<MissionBoardPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Hari ke-$done dari 14', style: const TextStyle(color: Color(0xFF57534e), fontSize: 13, fontWeight: FontWeight.w300)),
+                          Text('Hari ke-$done dari 14', style: const TextStyle(color: BrandColors.body, fontSize: 13, fontWeight: FontWeight.w300)),
                           const SizedBox(height: 8),
                           LinearProgressIndicator(
                             value: total > 0 ? done / total : 0,
-                            backgroundColor: const Color(0xFFe7e5e4),
-                            color: const Color(0xFFea580c),
+                            backgroundColor: BrandColors.border,
+                            color: BrandColors.brandOrange,
                             minHeight: 8,
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -127,22 +127,22 @@ class _MissionBoardPageState extends ConsumerState<MissionBoardPage> {
                               ),
                               child: Text(status, style: TextStyle(
                                 fontSize: 11,
-                                color: status == 'completed' ? Colors.green :
-                                       status == 'accepted' ? Colors.blue :
-                                       status == 'in_progress' ? Colors.orange : Colors.grey,
+                                color: status == 'completed' ? BrandColors.success :
+                                       status == 'accepted' ? BrandColors.info :
+                                       status == 'in_progress' ? BrandColors.warning : BrandColors.disabled,
                                 fontWeight: FontWeight.w600,
                               )),
                             ),
                           ]),
                           const SizedBox(height: 8),
-                          Text(m['description'] ?? '', style: const TextStyle(color: Color(0xFF57534e), fontSize: 13)),
+                          Text(m['description'] ?? '', style: const TextStyle(color: BrandColors.body, fontSize: 13)),
                           const SizedBox(height: 8),
                           Row(children: [
                             if (m['estimated_minutes'] != null)
                               Row(children: [
-                                BrandIcons.clock(color: const Color(0xFF57534e), size: 14),
+                                BrandIcons.clock(color: BrandColors.body, size: 14),
                                 const SizedBox(width: 4),
-                                Text('${m['estimated_minutes']} menit', style: const TextStyle(fontSize: 12, color: Color(0xFF57534e))),
+                                Text('${m['estimated_minutes']} menit', style: const TextStyle(fontSize: 12, color: BrandColors.body)),
                               ]),
                             const Spacer(),
                             if (status == 'pending')
@@ -153,7 +153,7 @@ class _MissionBoardPageState extends ConsumerState<MissionBoardPage> {
                                 child: const Text('Upload Bukti'),
                               ),
                             if (status == 'completed')
-                              const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                              const Icon(Icons.check_circle, color: BrandColors.success, size: 20),
                           ]),
                         ],
                       ),

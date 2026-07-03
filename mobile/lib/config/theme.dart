@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:bukadulu/presentation/widgets/common/brand_icons.dart';
 
 class AppTheme {
   static ThemeData get light {
     final textTheme = GoogleFonts.interTextTheme();
-    const orange = Color(0xFFea580c);
-    const label = Color(0xFF292524);
-    const border = Color(0xFFe7e5e4);
+    const orange = BrandColors.brandOrange;
+    const label = BrandColors.label;
+    const border = BrandColors.border;
     const white = Colors.white;
 
     return ThemeData(
@@ -31,7 +32,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(6),
           ),
-          disabledBackgroundColor: Colors.grey,
+          disabledBackgroundColor: BrandColors.disabled,
           disabledForegroundColor: white,
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
           textStyle: const TextStyle(
@@ -44,7 +45,7 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           backgroundColor: Colors.transparent,
           foregroundColor: orange,
-          side: const BorderSide(color: Color(0xFFfed7aa)),
+          side: const BorderSide(color: Color(0xFFfed7aa)), // ghost button border (cream-orange)
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(6),
           ),
@@ -75,15 +76,15 @@ class AppTheme {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Color(0xFFfecaca)),
+          borderSide: const BorderSide(color: Color(0xFFfecaca)), // red-100
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Color(0xFFdc2626), width: 2),
+          borderSide: const BorderSide(color: Color(0xFFdc2626), width: 2), // red-600
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         hintStyle: const TextStyle(
-          color: Color(0xFFa8a29e),
+          color: BrandColors.disabled,
           fontWeight: FontWeight.w300,
         ),
         labelStyle: const TextStyle(
