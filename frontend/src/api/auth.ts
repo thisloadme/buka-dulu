@@ -24,12 +24,24 @@ export interface QuotaInfo {
 }
 
 async function parseError(res: Response): Promise<string> {
+  const text = await res.text().catch(() => '')
+  // Coba parse JSON; kalau bukan JSON (mis. "404 page not found"), pakai teks apa adanya
   try {
-    const data = await res.json()
+    const data = JSON.parse(text)
     if (data?.error && typeof data.error === 'object') return data.error.message || 'Permintaan gagal'
     return data?.message || data?.error || 'Permintaan gagal'
   } catch {
-    return 'Permintaan gagal'
+    return text?.trim() || `Permintaan gagal (HTTP ${res.status})`
+  }
+}
+
+// Helper aman baca body sukses: kalau bukan JSON, throw dengan pesan jelas.
+async function parseJson(res: Response, fallbackMsg: string): Promise<any> {
+  const text = await res.text().catch(() => '')
+  try {
+    return JSON.parse(text)
+  } catch {
+    throw new Error(text?.trim() ? `${fallbackMsg}: ${text.trim().slice(0, 200)}` : fallbackMsg)
   }
 }
 
@@ -39,9 +51,8 @@ export async function login(emailOrPhone: string, password: string) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email_or_phone: emailOrPhone, password }),
   })
-  const data = await res.json()
-  if (!res.ok) throw new Error(data.message || data.error || 'Login gagal')
-  return data
+  if (!res.ok) throw new Error(await parseError(res))
+  return parseJson(res, 'Login gagal')
 }
 
 export async function register(fullName: string, email: string, password: string) {
@@ -50,9 +61,8 @@ export async function register(fullName: string, email: string, password: string
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ full_name: fullName, email, password }),
   })
-  const data = await res.json()
-  if (!res.ok) throw new Error(data.message || data.error || 'Registrasi gagal')
-  return data
+  if (!res.ok) throw new Error(await parseError(res))
+  return parseJson(res, 'Registrasi gagal')
 }
 
 export async function verifyOTP(email: string, otp: string) {
@@ -61,9 +71,8 @@ export async function verifyOTP(email: string, otp: string) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, otp }),
   })
-  const data = await res.json()
-  if (!res.ok) throw new Error(data.message || data.error || 'Verifikasi OTP gagal')
-  return data
+  if (!res.ok) throw new Error(await parseError(res))
+  return parseJson(res, 'Verifikasi OTP gagal')
 }
 
 export async function resendOTP(email: string) {
@@ -72,9 +81,8 @@ export async function resendOTP(email: string) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email }),
   })
-  const data = await res.json()
-  if (!res.ok) throw new Error(data.message || data.error || 'Kirim ulang OTP gagal')
-  return data
+  if (!res.ok) throw new Error(await parseError(res))
+  return parseJson(res, 'Kirim ulang OTP gagal')
 }
 
 export async function loginWithGoogle(code: string) {
@@ -83,9 +91,8 @@ export async function loginWithGoogle(code: string) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ code }),
   })
-  const data = await res.json()
-  if (!res.ok) throw new Error(data.message || data.error || 'Login Google gagal')
-  return data
+  if (!res.ok) throw new Error(await parseError(res))
+  return parseJson(res, 'Login Google gagal')
 }
 
 export async function getQuota(): Promise<QuotaInfo> {
